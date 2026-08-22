@@ -1,265 +1,196 @@
-# Temporal Memory Grid (TMG)
+# ⏱️ Temporal Memory Grid (TMG)
 
-<p align="center">
-  <a href="README.md">🇬🇧 <b>English</b></a> |
-  <a href="README.tr.md">🇹🇷 <b>Türkçe</b></a> |
-  <a href="README.de.md">🇩🇪 <b>Deutsch</b></a> |
-  <a href="README.es.md">🇪🇸 <b>Español</b></a> |
-  <a href="README.fr.md">🇫🇷 <b>Français</b></a>
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.0+">
-  <img src="https://img.shields.io/badge/Veritaban%C4%B1-SQLite%20%7C%20MySQL-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="Database">
-  <img src="https://img.shields.io/badge/Aray%C3%BCz-TailwindCSS%20%2B%20Chart.js-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Frontend">
-  <img src="https://img.shields.io/badge/Canl%C4%B1%20Ak%C4%B1%C5%9F-Server--Sent%20Events%20(SSE)-FF4500?style=for-the-badge" alt="SSE">
-  <img src="https://img.shields.io/badge/i18n-5%20Dil%20(TR%20%7C%20EN%20%7C%20DE%20%7C%20ES%20%7C%20FR)-8A2BE2?style=for-the-badge" alt="i18n">
-  <img src="https://img.shields.io/badge/Lisans-Apache%202.0-blue.svg?style=for-the-badge" alt="Apache 2.0 Lisansı">
-</p>
+[![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net/)
+[![Veritabanı](https://img.shields.io/badge/Veritabanı-SQLite_%7C_MySQL-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-TailwindCSS_%2B_Chart.js-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Canlı Akış](https://img.shields.io/badge/Canlı_Akış-Server--Sent_Events_(SSE)-FF4500?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
+[![i18n](https://img.shields.io/badge/i18n-5_Dil_(TR_|_EN_|_DE_|_ES_|_FR)-8A2BE2?style=for-the-badge)](lang/)
+[![Lisans](https://img.shields.io/badge/Lisans-Apache_2.0-blue?style=for-the-badge)](LICENSE)
+[![Testler](https://img.shields.io/badge/Testler-22%20Geçti-success?style=for-the-badge&logo=php&logoColor=white)](tests/test_tmg.php)
+[![GitHub Stars](https://img.shields.io/github/stars/adacreativeco/temporal-memory-grid?style=for-the-badge&color=ffd700)](https://github.com/adacreativeco/temporal-memory-grid/stargazers)
+[![Sürüm](https://img.shields.io/badge/Sürüm-v1.0.0-6366f1?style=for-the-badge)](https://github.com/adacreativeco/temporal-memory-grid/releases)
 
-**Temporal Memory Grid (TMG)**; PHP 8, SQLite/MySQL, TailwindCSS ve Chart.js ile geliştirilmiş, yüksek performanslı ve hafif bir zaman serisi olay toplama, zamansal kovalama (bucketing), agregasyon, trend karşılaştırma ve anomali tespit platformudur.
+<br/>
 
-Canlı coğrafi veya veri akışlarına (örneğin *Realtime Map Event Grid*) kesintisiz bağlanır, yüksek frekanslı ham olayları çok katmanlı zaman kovalarına (`1m`, `5m`, `15m`, `1h`, `1d`) dönüştürür, anomalileri yakalar, iki dönemlik trendleri hesaplar ve etkileşimli grafiklerle gerçek zamanlı SSE veri akışı sunar.
+**Yüksek Performanslı Zaman Serisi Kümeleme, Çok Kademeli Zaman Kovalama & İstatiksel Anomali Tespit Motoru.**
 
----
+[🇹🇷 Türkçe Dokümantasyon](README.tr.md) • [🇺🇸 English Documentation](README.md) • [📖 Vaka Analizi](https://adacreative.co/vaka-analizleri/temporal-memory-grid)
 
-## 📑 İçindekiler
-- [Mimari](#-mimari)
-- [Öne Çıkan Özellikler](#-öne-çıkan-özellikler)
-- [Hızlı Başlangıç](#-hızlı-başlangıç)
-- [Arka Plan Otomasyonu & Worker](#-arka-plan-otomasyonu--worker)
-- [Gerçek Zamanlı Akış (SSE)](#-gerçek-zamanlı-akış-sse)
-- [REST API Referansı](#-rest-api-referansı)
-- [Dizin Yapısı](#-dizin-yapısı)
-- [Güvenlik & Yetkilendirme](#-güvenlik--yetkilendirme)
-- [Lisans & Yazarlar](#-lisans--yazarlar)
+</div>
 
 ---
 
-## 🏛 Mimari
+**Temporal Memory Grid (TMG)**, saf **PHP 8**, **SQLite/MySQL**, **TailwindCSS** ve **Chart.js** kullanılarak geliştirilmiş, hafif ve yüksek performanslı bir zaman serisi veri işleme, zamansal kovalama (bucketing), eğilim (trend) analizi ve anomali tespit platformudur.
+
+Harici mekansal ya da gerçek zamanlı olay akışlarına (örneğin *Realtime Map Event Grid*) bağlanır, yüksek frekanslı ham olayları çok kademeli zaman kovalarına (**`1m`**, **`5m`**, **`15m`**, **`1h`**, **`1d`**) indirger ve özetler; istatistiksel sapmaları ve ani sıçramaları tespit eder, iki dönemli eğilim hızlarını hesaplar, webhook uyarıları fırlatır ve metrikleri **Server-Sent Events (SSE)** üzerinden canlı yayınlar.
+
+---
+
+## 🏗️ Sistem Mimarisi
 
 ```mermaid
-graph TD
-    subgraph "Olay Kaynağı Katmanı"
-        RTEG["Realtime Map Event Grid / Public API"]
-        Sim["Simüle Edilmiş Olay Akışı"]
+flowchart TD
+    subgraph StreamSources["📡 Canlı Veri Kaynakları"]
+        RTEG["Realtime Map Event Grid
+(SSE Köprüsü)"]
+        ExternalAPI["Harici IoT / Telemetri API'leri"]
+        DirectEvents["Doğrudan Toplu Olay Gönderimleri"]
     end
 
-    subgraph "İçe Aktarım & Worker Katmanı"
-        Worker["Worker Daemon (worker.php)"]
-        Puller["Veri Çekici (data_puller.php)"]
-        Bridge["Ingest Bridge (actions/ingest_bridge.php)"]
+    subgraph CoreEngine["⚡ TMG İşlem Çekirdeği (PHP 8)"]
+        DataPuller["Veri Çekici & İçe Aktarım Köprüsü
+(actions/ingest_bridge.php)"]
+        AggEngine["Çok Kademeli Kümeleme Motoru
+(1m, 5m, 15m, 1h, 1d Kovaları)"]
+        AnomalyEngine["İstatistiksel Anomali Tespit Edici
+(Z-Score & Sıçrama Tespiti)"]
+        TrendEngine["İki Dönemli Eğilim Motoru
+(Yüzdesel Değişim & Hız)"]
+        AlertEngine["Alarm Kuralları & Webhook Dağıtıcısı
+(Slack, Discord, Özel JSON)"]
+        CacheManager["Yüksek Hızlı TTL Dosya Önbelleği (cache.php)"]
     end
 
-    subgraph "Çekirdek Agregasyon Motoru"
-        Agg["Agregasyon Motoru (1m)"]
-        Rollup["Rollup Türetme (5m, 15m, 1h)"]
-        Cleanup["Retention Temizleyicisi"]
+    subgraph StorageLayer["🗄️ Kalıcı Veritabanı"]
+        TimeBuckets["time_buckets & bucket_metrics"]
+        AlertHistory["alert_rules & alert_history"]
+        Logs["aggregation_jobs_log & system_logs"]
     end
 
-    subgraph "Depolama & Önbellek"
-        DB[("SQLite / MySQL DB")]
-        Cache["Dosya Tabanlı Cache"]
+    subgraph PresentationLayer["🖥️ Sunum & Dağıtım"]
+        ChartUI["Chart.js İnteraktif Kontrol Paneli
+(Çizgi, Çubuk, Polar, Isı Haritası)"]
+        LiveSSE["Server-Sent Events Canlı Akışı (/api/v1/stream.php)"]
+        RESTAPI["REST API (/api/v1/timeseries, trend, anomalies, export)"]
+        I18n["5 Dilli Arayüz Motoru (TR, EN, DE, ES, FR)"]
     end
 
-    subgraph "API & Sunum Katmanı"
-        API["REST API v1 (Timeseries / Trends / Anomalies)"]
-        SSE["SSE Canlı Akış (api/v1/stream.php)"]
-        Dashboard["Web Dashboard (Chart.js & TailwindCSS)"]
-    end
-
-    RTEG --> Puller
-    Sim --> Worker
-    Worker --> Puller
-    Puller --> DB
-    Bridge --> DB
-    Worker --> Agg
-    Agg --> Rollup
-    Agg --> DB
-    Rollup --> DB
-    Worker --> Cleanup
-    DB --> Cache
-    DB --> API
-    DB --> SSE
-    API --> Dashboard
-    SSE --> Dashboard
+    StreamSources --> DataPuller
+    DataPuller --> AggEngine
+    AggEngine --> AnomalyEngine
+    AggEngine --> TrendEngine
+    AnomalyEngine --> AlertEngine
+    AggEngine <--> StorageLayer
+    CoreEngine <--> CacheManager
+    CoreEngine --> PresentationLayer
 ```
 
 ---
 
-## ✨ Öne Çıkan Özellikler
+## 🚀 Öne Çıkan Yetenekler
 
-1. **Zamansal Kovalama & Agregasyon Motoru**
-   - Ham olayları otomatik olarak `1m`, `5m`, `15m`, `1h`, `1d` aralıklarına böler.
-   - Metrikler: `total_events`, `events_by_type`, `events_by_source` ve `events_by_geo_region`.
-   - Analitik sorgular için üst seviye rollupları otomatik üretir.
+### 1. ⏱️ Çok Kademeli Zamansal Kovalama (Bucketing)
+- Ham olayları 5 standart zaman çözünürlüğünde otomatik indirger ve kümeleştirir: **`1m`**, **`5m`**, **`15m`**, **`1h`** ve **`1d`**.
+- Her zaman dilimi için toplam hacmi, kategori dağılımlarını, ortalama önem derecelerini ve min/max değerlerini hesaplar.
 
-2. **Etkileşimli Zaman Serisi Paneli (Dashboard)**
-   - Chart.js tabanlı çizgi ve sütun grafikleri.
-   - Tarih filtreleri (Bugün, Son 24 Saat, Son 7 Gün, Özel aralık), kova boyutu, olay türü ve kaynak filtreleme.
-   - Toplam olay, en yoğun kova ve ortalama oranları gösteren özet KPI kartları.
+### 2. 🔍 İstatistiksel Anomali Tespiti
+- Metrik sapmalarını hareketli taban çizgileriyle (rolling baseline) karşılaştırarak hacim sıçramalarını, ani trafik düşüşlerini ve olağandışı aktiviteleri tespit eder.
+- Güven skorları ve anomali ciddiyet etiketleri (`critical`, `warning`, `info`) üretir.
 
-3. **İki Dönemlik Trend Karşılaştırma**
-   - Birinci dönemi karşılaştırma dönemiyle kıyaslama (örn: Bu saat vs Geçen saat).
-   - Mutlak fark ve yüzde değişim hesaplamaları ile karşılaştırmalı grafikler.
+### 3. 📈 İki Dönemli Eğilim (Trend) Analizi
+- İki ardışık zaman penceresindeki (ör. *Son 24 Saat vs. Önceki 24 Saat*) metrik performansını karşılaştırır.
+- Net yüzdesel değişim, eğilim yönü (`artan`, `azalan`, `durağan`) ve ivme göstergeleri sunar.
 
-4. **Anomali Tespiti**
-   - **Tarihsel Ortalama** veya **Hareketli Ortalama (MA)** referansıyla olağandışı sıçrama ve düşüşleri tespit eder.
-   - Anomaliye uğrayan kovaları grafikte kırmızı ile vurgular ve tablo olarak listeler.
+### 4. 🔔 Kural Tabanlı Alarmlar & Dışa Aktarım Webhookları
+- Hacim eşiklerine veya anomali tespitlerine göre özel tetikleme kuralları tanımlama.
+- **Slack**, **Discord** veya özel webhook uç noktalarına otomatik uyarı bildirimi.
 
-5. **Otomatik Arka Plan İşleyicisi (Worker / Daemon)**
-   - Bağımsız CLI daemon'u (kalp atışı takibi, `--interval=10`) veya crontab modu (`--once`).
-   - Otomatik veri çekme, rollup türetme ve günlük retention temizliği.
+### 5. ⚡ Sıfır Gecikmeli Canlı SSE Akışı
+- Server-Sent Events uç noktası (`/api/v1/stream.php`) üzerinden kontrol paneline milisaniyeler içinde yeni özetleri ve anomali alarmlarını iletir.
 
-6. **Gerçek Zamanlı Canlı Akış (SSE - Server-Sent Events)**
-   - Dahili `api/v1/stream.php` servisi ile sayfayı yenilemeden anlık kova verilerini canlı grafiklere aktarma.
+### 6. 🌐 5 Dilli Yerel Destek (i18n)
+- Kontrol paneli, grafikler, modallar ve uyarı mesajlarında tam dil desteği:
+  * 🇹🇷 **Türkçe** • 🇬🇧 **English** • 🇩🇪 **Deutsch** • 🇪🇸 **Español** • 🇫🇷 **Français**
 
-7. **Dinamik Veritabanı Yetkilendirmesi & API Key Yönetimi**
-   - Bcrypt şifre hashleme (`password_verify`).
-   - Panelden dinamik API Key üretme, durdurma, rate limit belirleme ve panoya kopyalama.
-
-8. **Kurumsal Çok Dilli Destek (i18n)**
-   - 5 yerleşik dil: 🇹🇷 Türkçe, 🇬🇧 İngilizce, 🇩🇪 Almanca, 🇪🇸 İspanyolca, 🇫🇷 Fransızca.
-   - Otomatik tarayıcı dili algılama (`Accept-Language` ağırlık puanlaması).
-   - Dil değişiminde URL filtrelerini koruma ve Chart.js eksenlerini yerelleştirme.
+### 7. 🚀 Yüksek Hızlı TTL Önbellek
+- Dahili dosya önbellekleme mekanizması (`cache.php`) ile ağır kümeleme sorgularında anlık yanıt süreleri.
 
 ---
 
-## 🚀 Hızlı Başlangıç
+## 📡 REST API Referansı
 
-### 1. Gereksinimler
-- **PHP 8.0+** (`pdo_sqlite` veya `pdo_mysql`, `curl`, `json` eklentileri aktif).
-- Web Sunucu: Yerleşik PHP sunucusu, Apache veya Nginx.
+| Uç Nokta | Metot | Kimlik Doğrulama | Açıklama |
+|---|---|---|---|
+| `/api/v1/timeseries.php` | `GET` | `X-API-Key` | `bucket_size`, `start_time` ve `end_time` filtreleriyle zaman serisi metrik kovalarını sorgular. |
+| `/api/v1/trend.php` | `GET` | `X-API-Key` | İki ardışık zaman periyodu arasındaki karşılaştırmalı eğilim hızını hesaplar. |
+| `/api/v1/anomalies.php` | `GET` | `X-API-Key` | Tespit edilen istatistiksel anomalileri ve taban çizgisi sapmalarını listeler. |
+| `/api/v1/stream.php` | `GET` | İsteğe Bağlı | Server-Sent Events (SSE) canlı metrik akışı. |
+| `/api/v1/export.php` | `GET` | `X-API-Key` | Zaman serisi verilerini JSON veya CSV olarak dışa aktarır. |
 
-### 2. Veritabanı Kurulumu & Başlatma
-Otomatik SQLite şema ve seed betiğini çalıştırın:
+### 📝 Örnek Zaman Serisi Sorgusu (cURL)
+
+```bash
+curl -X GET "http://localhost:8080/api/v1/timeseries.php?bucket_size=1h&start_time=2026-08-01T00:00:00Z&end_time=2026-08-02T00:00:00Z" \
+  -H "X-API-Key: temporal_grid_api_key_2024"
+```
+
+---
+
+## 🛠️ Hızlı Başlangıç
+
+### 1. Veritabanını Başlatın ve Örnek Verileri Yükleyin
 ```bash
 php setup_database_sqlite.php
 ```
-*Tüm tabloları (`users`, `api_keys`, `time_buckets`, `bucket_metrics`, `events`, `settings`) oluşturur ve varsayılan yönetici ile API anahtarlarını tanımlar.*
+*(SQLite tablolarını oluşturur ve varsayılan `admin` / `temporal123` kullanıcısını ekler).*
 
-### 3. Web Sunucusunu Başlatın
+### 2. Otomatik Birim Testleri Çalıştırın
 ```bash
-php -S localhost:8000
+php tests/test_tmg.php
 ```
 
-### 4. Yönetim Paneline Erişin
-- **URL:** `http://localhost:8000/login.php`
-- **Kullanıcı Adı:** `admin`
-- **Şifre:** `temporal123`
-
----
-
-## ⚙️ Arka Plan Otomasyonu & Worker
-
-Worker arka planda harici akışlardan verileri çeker, kovalara böler ve veri saklama kurallarına göre eski kayıtları temizler.
-
-### Sürekli Daemon Modu:
+### 3. Yerel Sunucuyu Başlatın
 ```bash
-php worker.php --interval=10 --simulate
+php -S 0.0.0.0:8080
 ```
-*Windows'ta çift tıklayarak çalıştırmak için: [`scripts/run_worker.bat`](file:///g:/shovt/tam%20olarak%20bitmeyenler/TEMPORAL%20MEMORY%20GRID/TEMPORAL%20MEMORY%20GRID/scripts/run_worker.bat).*
+Tarayıcınızda [http://localhost:8080](http://localhost:8080) adresini açın.
 
-### Tek Seferlik / Crontab Modu:
+### 4. Arka Plan İşçisini (Worker) Başlatın
 ```bash
-php worker.php --once --simulate
-```
-Linux crontab eklemek için (`crontab -e`):
-```bash
-* * * * * /usr/bin/php /path/to/project/worker.php --once >> /var/log/tmg_worker.log 2>&1
+php worker.php
 ```
 
 ---
 
-## 📡 Gerçek Zamanlı Akış (SSE)
+## 📂 Proje Yapısı
 
-JavaScript ile canlı Server-Sent Events akışına bağlanın:
-
-```javascript
-const eventSource = new EventSource('/api/v1/stream.php?api_key=temporal_grid_api_key_2024&bucket_size=1m');
-
-eventSource.addEventListener('update', (event) => {
-    const data = JSON.parse(event.data);
-    console.log('Canlı Kova Verisi:', data);
-});
+```
+temporal-memory-grid/
+├── config.php                      # Ana yapılandırma ve önbellek yolları
+├── database_pdo.php                # PDO veritabanı bağlantı havuzu
+├── setup_database_sqlite.php       # SQLite şema göçleri ve veri tohumlayıcı
+├── aggregation_engine.php          # Çok kademeli zamansal kümeleme motoru
+├── alert_engine.php                # Alarm değerlendirme ve webhook dağıtıcısı
+├── cache.php                       # Yüksek hızlı dosya önbellek yöneticisi
+├── i18n.php                        # 5 dilli uluslararasılaşma motoru
+├── system_logs.php                 # Sistem olay ve hata kayıtları
+├── utils.php                       # Zaman doğrulama ve biçimlendirme araçları
+├── worker.php                      # Arka plan kümeleme ve veri çekme işçisi
+├── index.php                       # Ana kontrol paneli (Chart.js grafikleri)
+├── anomalies.php                   # Anomali inceleme ekranı
+├── trends.php                      # Karşılaştırmalı eğilim gezgini
+├── settings.php                    # Sistem, saklama süresi ve webhook ayarları
+├── actions/                        # Arka plan eylemleri ve API anahtar yönetimi
+├── api/v1/                         # REST API uç noktaları (timeseries, trend, anomalies, stream)
+├── docs/schemas/                   # JSON şema doğrulama dosyaları
+├── lang/                           # 5 dilli sözlük dosyaları (tr, en, de, es, fr)
+├── tests/
+│   └── test_tmg.php                # Otomatik test paketi (22 birim test)
+└── scripts/
+    ├── cron.sh                     # Linux cron çalıştırma betiği
+    └── run_worker.bat              # Windows arka plan işçi başlatıcısı
 ```
 
 ---
 
-## 🔌 REST API Referansı
+## 📄 Lisans
 
-Tüm API istekleri `?api_key=...` query parametresi veya `X-API-Key: ...` HTTP Header'ı gerektirir.
-
-### Varsayılan API Anahtarları:
-- `temporal_grid_api_key_2024`
-- `demo_key_12345`
-
-| Uç Nokta | Metot | Açıklama |
-| :--- | :---: | :--- |
-| `/api/v1/timeseries.php` | `GET` | Belirtilen metrik ve zaman aralığı için zaman serisi kovalarını döndürür. |
-| `/api/v1/trend.php` | `GET` | İki zaman penceresini karşılaştırarak oran farkını hesaplar. |
-| `/api/v1/anomalies.php` | `GET` | Tarihsel veya hareketli ortalamaya göre sapma gösteren anomalileri bulur. |
-| `/api/v1/stream.php` | `GET` | Gerçek zamanlı grafikler için Server-Sent Events (SSE) akışı sağlar. |
-| `/api/v1/export.php` | `GET` | Verileri CSV veya JSON olarak dışa aktarır. |
-
-#### Örnek Zaman Serisi Çağrısı:
-```bash
-curl -X GET "http://localhost:8000/api/v1/timeseries.php?api_key=temporal_grid_api_key_2024&metric_type=total_events&bucket_size=1m&start_time=2026-08-22T00:00:00Z&end_time=2026-08-22T12:00:00Z"
-```
+Apache 2.0 Lisansı ile dağıtılmaktadır. Detaylar için [LICENSE](LICENSE) dosyasına bakabilirsiniz.
 
 ---
 
-## 📁 Dizin Yapısı
-
-```
-TEMPORAL MEMORY GRID/
-├── actions/                     # AJAX ve Backend API uçları
-│   ├── api_keys.php             # API Key yönetimi (CRUD)
-│   ├── change_password.php      # Şifre güncelleme
-│   ├── set_language.php         # Dil değiştirme AJAX ucu
-│   ├── ingest_bridge.php        # JSON köprüsü & tekilleştirme
-│   ├── worker_status.php        # Worker sağlık & heartbeat API'si
-│   └── worker_control.php       # Manuel worker döngüsü tetikleyici
-├── api/v1/                      # REST API Servisleri
-│   ├── timeseries.php           # Zaman serisi kova verileri
-│   ├── trend.php                # İki dönemlik karşılaştırma
-│   ├── anomalies.php            # Anomali tespit servisi
-│   ├── stream.php               # Server-Sent Events (SSE)
-│   └── export.php               # CSV/JSON export
-├── docs/                        # Dokümantasyon ve JSON şemaları
-├── includes/                    # Header, Footer ve genel bileşenler
-├── lang/                        # Çok dilli sözlükler (TR, EN, DE, ES, FR)
-├── postman/                     # Hazır Postman koleksiyonu
-├── scripts/                     # Windows (.bat) ve Linux (.sh) çalıştırıcıları
-├── aggregation_engine.php       # Çekirdek agregasyon ve kovalama motoru
-├── auth.php                     # Güvenlik & API anahtarı doğrulama
-├── cache.php                    # Dosya tabanlı önbellek servisi
-├── config.php                   # Sistem yapılandırması
-├── config.sample.php            # Örnek yapılandırma şablonu
-├── data_puller.php              # Harici veri çekici
-├── derive_rollups.php           # Rollup türetme (1m -> 5m -> 15m -> 1h)
-├── i18n.php                     # Çok dilli dil motoru ve otomatik algılama
-├── index.php                    # Dashboard Arayüzü
-├── trends.php                   # Trend Karşılaştırma Arayüzü
-├── anomalies.php                # Anomali Tespiti Arayüzü
-├── settings.php                 # Ayarlar, Worker ve API Key Arayüzü
-├── worker.php                   # Arka Plan Worker Daemon'u
-└── setup_database_sqlite.php    # Veritabanı şema ve seed betiği
-```
-
----
-
-## 🔒 Güvenlik & Yetkilendirme
-
-- **Web Paneli:** Bcrypt şifre hashleme (`PASSWORD_BCRYPT`) ile oturum tabanlı kimlik doğrulama.
-- **REST API:** `api_keys` tablosu üzerinden IP/dakika bazlı hız sınırlaması (varsayılan: 100 istek/dk).
-- **SQL Enjeksiyonu Koruması:** PDO üzerinden %100 parametreli sorgular.
-- **XSS Koruması:** Tüm arayüzlerde `htmlspecialchars` ile veri filtreleme.
-
----
-
-## 📄 Lisans & Yazarlar
-
-- **Yazar & Bakımcı:** **ADA Creative Co.** ([https://adacreative.co](https://adacreative.co))
-- **İletişim / Git:** [git@adacreative.co](mailto:git@adacreative.co)
-- **Lisans:** Bu proje [Apache License 2.0](LICENSE) ile lisanslanmıştır.
+<div align="center">
+⏱️ <a href="https://github.com/adacreativeco">ADA Creative Co.</a> tarafından geliştirilmiştir.
+</div>

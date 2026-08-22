@@ -1,283 +1,197 @@
-# Temporal Memory Grid (TMG)
+# ⏱️ Temporal Memory Grid (TMG)
 
-<p align="center">
-  <a href="README.md">🇬🇧 <b>English</b></a> |
-  <a href="README.tr.md">🇹🇷 <b>Türkçe</b></a> |
-  <a href="README.de.md">🇩🇪 <b>Deutsch</b></a> |
-  <a href="README.es.md">🇪🇸 <b>Español</b></a> |
-  <a href="README.fr.md">🇫🇷 <b>Français</b></a>
-</p>
+<div align="center">
 
-<p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.0+">
-  <img src="https://img.shields.io/badge/Database-SQLite%20%7C%20MySQL-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="Database">
-  <img src="https://img.shields.io/badge/Frontend-TailwindCSS%20%2B%20Chart.js-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Frontend">
-  <img src="https://img.shields.io/badge/Streaming-Server--Sent%20Events%20(SSE)-FF4500?style=for-the-badge" alt="SSE">
-  <img src="https://img.shields.io/badge/i18n-5%20Languages%20(TR%20%7C%20EN%20%7C%20DE%20%7C%20ES%20%7C%20FR)-8A2BE2?style=for-the-badge" alt="i18n">
-  <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge" alt="Apache 2.0 License">
-</p>
+[![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net/)
+[![Database](https://img.shields.io/badge/Database-SQLite_%7C_MySQL-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-TailwindCSS_%2B_Chart.js-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Streaming](https://img.shields.io/badge/Streaming-Server--Sent_Events_(SSE)-FF4500?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)
+[![i18n](https://img.shields.io/badge/i18n-5_Languages_(TR_|_EN_|_DE_|_ES_|_FR)-8A2BE2?style=for-the-badge)](lang/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue?style=for-the-badge)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-22%20Passed-success?style=for-the-badge&logo=php&logoColor=white)](tests/test_tmg.php)
+[![GitHub Stars](https://img.shields.io/github/stars/adacreativeco/temporal-memory-grid?style=for-the-badge&color=ffd700)](https://github.com/adacreativeco/temporal-memory-grid/stargazers)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-6366f1?style=for-the-badge)](https://github.com/adacreativeco/temporal-memory-grid/releases)
 
-**Temporal Memory Grid (TMG)** is a high-performance, lightweight time-series event ingestion, temporal bucketing, aggregation, trend comparison, and anomaly detection platform built with PHP 8, SQLite/MySQL, TailwindCSS, and Chart.js.
+<br/>
 
-It seamlessly connects to real-time geospatial/event streams (such as *Realtime Map Event Grid*), aggregates high-frequency raw events into multi-tier time buckets (`1m`, `5m`, `15m`, `1h`, `1d`), detects anomalies, computes two-period trends, and provides interactive charts and real-time live data streaming.
+**High-Performance Time-Series Aggregation, Multi-Tier Temporal Bucketing & Statistical Anomaly Detection Engine.**
 
----
+[English Documentation](README.md) • [🇹🇷 Türkçe Dokümantasyon](README.tr.md) • [📖 Case Study](https://adacreative.co/vaka-analizleri/temporal-memory-grid)
 
-## 📑 Table of Contents
-- [Architecture](#-architecture)
-- [Key Features](#-key-features)
-- [Quick Start](#-quick-start)
-- [Background Worker & Automation](#-background-worker--automation)
-- [Real-Time Streaming (SSE)](#-real-time-streaming-sse)
-- [REST API Reference](#-rest-api-reference)
-- [Directory Structure](#-directory-structure)
-- [Security & Authentication](#-security--authentication)
-- [License](#-license)
+</div>
 
 ---
 
-## 🏛 Architecture
+**Temporal Memory Grid (TMG)** is a lightweight, high-performance time-series event processing, temporal bucketing, trend analysis, and anomaly detection platform built with pure **PHP 8**, **SQLite/MySQL**, **TailwindCSS**, and **Chart.js**.
+
+It connects to upstream spatial or real-time event streams (such as *Realtime Map Event Grid*), downsamples and aggregates high-frequency raw events into multi-tier time buckets (`1m`, `5m`, `15m`, `1h`, `1d`), detects statistical outliers and spikes, calculates two-period trend velocities, triggers webhook alerts, and streams metrics live via **Server-Sent Events (SSE)**.
+
+---
+
+## 🏗️ System Architecture
 
 ```mermaid
-graph TD
-    subgraph "Event Source Layer"
-        RTEG["Realtime Map Event Grid / Public API"]
-        Sim["Simulated Event Stream"]
+flowchart TD
+    subgraph StreamSources["📡 Upstream Stream Sources"]
+        RTEG["Realtime Map Event Grid
+(SSE Ingest Bridge)"]
+        ExternalAPI["External IoT / Telemetry APIs"]
+        DirectEvents["Direct Ingestion Batches"]
     end
 
-    subgraph "Ingestion & Worker Layer"
-        Worker["Worker Daemon (worker.php)"]
-        Puller["Data Puller (data_puller.php)"]
-        Bridge["Ingest Bridge (actions/ingest_bridge.php)"]
+    subgraph CoreEngine["⚡ TMG Processing Core (PHP 8)"]
+        DataPuller["Data Puller & Ingest Bridge
+(actions/ingest_bridge.php)"]
+        AggEngine["Multi-Tier Aggregation Engine
+(1m, 5m, 15m, 1h, 1d Buckets)"]
+        AnomalyEngine["Statistical Anomaly Detector
+(Z-Score & Spike Recognition)"]
+        TrendEngine["Two-Period Trend Velocity Engine
+(Percentage Shifts & Drift)"]
+        AlertEngine["Alert Rules & Webhook Dispatcher
+(Slack, Discord, Custom JSON)"]
+        CacheManager["High-Speed TTL File Cache (cache.php)"]
     end
 
-    subgraph "Core Aggregation Engine"
-        Agg["Aggregation Engine (1m)"]
-        Rollup["Rollup Derivation (5m, 15m, 1h)"]
-        Cleanup["Retention Cleaner"]
+    subgraph StorageLayer["🗄️ Persistence Layer"]
+        TimeBuckets["time_buckets & bucket_metrics"]
+        AlertHistory["alert_rules & alert_history"]
+        Logs["aggregation_jobs_log & system_logs"]
     end
 
-    subgraph "Storage & Cache"
-        DB[("SQLite / MySQL DB")]
-        Cache["File-based Cache"]
+    subgraph PresentationLayer["🖥️ Presentation & Distribution"]
+        ChartUI["Chart.js Interactive Dashboard
+(Line, Bar, Polar Area, Heatmaps)"]
+        LiveSSE["Server-Sent Events Stream (/api/v1/stream.php)"]
+        RESTAPI["REST API (/api/v1/timeseries, trend, anomalies, export)"]
+        I18n["5-Language UI Engine (TR, EN, DE, ES, FR)"]
     end
 
-    subgraph "API & Presentation Layer"
-        API["REST API v1 (Timeseries / Trends / Anomalies)"]
-        SSE["SSE Live Stream (api/v1/stream.php)"]
-        Dashboard["Web Dashboard (Chart.js & TailwindCSS)"]
-    end
-
-    RTEG --> Puller
-    Sim --> Worker
-    Worker --> Puller
-    Puller --> DB
-    Bridge --> DB
-    Worker --> Agg
-    Agg --> Rollup
-    Agg --> DB
-    Rollup --> DB
-    Worker --> Cleanup
-    DB --> Cache
-    DB --> API
-    DB --> SSE
-    API --> Dashboard
-    SSE --> Dashboard
+    StreamSources --> DataPuller
+    DataPuller --> AggEngine
+    AggEngine --> AnomalyEngine
+    AggEngine --> TrendEngine
+    AnomalyEngine --> AlertEngine
+    AggEngine <--> StorageLayer
+    CoreEngine <--> CacheManager
+    CoreEngine --> PresentationLayer
 ```
 
 ---
 
-## ✨ Key Features
+## 🚀 Key Features
 
-1. **Temporal Bucketing & Aggregation Engine**
-   - Automatically aggregates raw events into `1m`, `5m`, `15m`, `1h`, `1d` intervals.
-   - Computes metrics: `total_events`, `events_by_type`, `events_by_source`, and `events_by_geo_region`.
-   - Derives higher-level rollups on-the-fly for ultra-fast analytical queries.
+### 1. ⏱️ Multi-Tier Temporal Bucketing
+- Automatic downsampling and rollup into 5 standardized temporal resolutions: **`1m`**, **`5m`**, **`15m`**, **`1h`**, and **`1d`**.
+- Computes aggregate metrics (total volume, category distributions, severity averages, min/max metrics) per time slice.
 
-2. **Interactive Time-Series Dashboard**
-   - Responsive line and bar charts powered by Chart.js.
-   - Filter by date ranges (Today, Last 24 Hours, Last 7 Days, Custom range), bucket size, event type, and source.
-   - Summary cards displaying total events, peak bucket times, and average rates.
+### 2. 🔍 Statistical Anomaly Detection
+- Analyzes metric deviations using rolling baselines to detect volume spikes, traffic drops, and irregular activity.
+- Exposes confidence scores and anomaly severity tags (`critical`, `warning`, `info`).
 
-3. **Two-Period Trend Comparison**
-   - Compare any primary period against a comparison period (e.g. this hour vs last hour).
-   - Computes absolute event differences and percentage changes with visual comparison graphs.
+### 3. 📈 Two-Period Trend Analysis
+- Compares metric performance across consecutive time windows (e.g. *Current 24h vs. Previous 24h* or *This Week vs. Last Week*).
+- Outputs net percentage change, trend direction (`increasing`, `decreasing`, `stable`), and velocity indicators.
 
-4. **Anomaly Detection**
-   - Detects abnormal spikes or drops using **Historical Average** or **Moving Average (MA)** window baselines.
-   - Highlights anomalous buckets on the chart in red and presents tabular variance metrics.
+### 4. 🔔 Rule-Based Alerting & Outbound Webhooks
+- Define custom trigger rules based on volume thresholds or anomaly detections.
+- Native dispatch to **Slack**, **Discord**, or custom webhook endpoints with configurable cooldown intervals.
 
-5. **Automated Background Worker & Daemon**
-   - Standalone CLI daemon with graceful shutdown, live heartbeat monitoring, and crontab mode (`--once`).
-   - Automated periodic data ingestion, rollup synthesis, and daily retention cleanup.
+### 5. ⚡ Zero-Latency SSE Live Streaming
+- Server-Sent Events push endpoint (`/api/v1/stream.php`) delivering new metric rollups and anomaly alerts to client dashboards in real time.
 
-6. **Real-Time Streaming (SSE)**
-   - Built-in Server-Sent Events endpoint streaming live bucket counts and real-time statistics directly into the dashboard.
+### 6. 🌐 5-Language Native Localization (i18n)
+- Seamless multi-language support across all dashboards, tooltips, alert messages, and reports:
+  * 🇹🇷 **Türkçe** • 🇬🇧 **English** • 🇩🇪 **Deutsch** • 🇪🇸 **Español** • 🇫🇷 **Français**
 
-7. **Dynamic DB Authentication & API Keys**
-   - Bcrypt-hashed user login (`password_verify`).
-   - Dynamic API Key management in web UI (generate, revoke, rate limit, copy to clipboard).
-
-8. **Enterprise Multi-Language Support (i18n)**
-   - 5 built-in languages with full dictionary coverage: 🇹🇷 Turkish, 🇬🇧 English, 🇩🇪 German, 🇪🇸 Spanish, 🇫🇷 French.
-   - Automatic browser `Accept-Language` detection with quality-score weighting.
-   - URL filter preservation on language switch (`I18n::getSwitchUrl()`) and client-side Chart.js / SSE locale synchronization.
-
+### 7. 🚀 Lightweight High-Speed Caching
+- Built-in file-based TTL caching layer (`cache.php`) delivering sub-millisecond response times for heavy aggregations.
 
 ---
 
-## 🚀 Quick Start
+## 📡 REST API Reference
 
-### 1. Requirements
-- **PHP 8.0+** with `pdo_sqlite` (or `pdo_mysql`), `curl`, and `json` extensions enabled.
-- Web Server: Built-in PHP server, Apache, or Nginx.
+| Endpoint | Method | Authentication | Description |
+|---|---|---|---|
+| `/api/v1/timeseries.php` | `GET` | `X-API-Key` | Queries aggregated metric buckets with `bucket_size`, `start_time`, and `end_time` filters. |
+| `/api/v1/trend.php` | `GET` | `X-API-Key` | Computes comparative trend velocity between two consecutive time periods. |
+| `/api/v1/anomalies.php` | `GET` | `X-API-Key` | Lists detected statistical anomalies, severity levels, and baseline deviations. |
+| `/api/v1/stream.php` | `GET` | Optional | Server-Sent Events (SSE) live metric stream. |
+| `/api/v1/export.php` | `GET` | `X-API-Key` | Exports time-series datasets in JSON or CSV format for data science workflows. |
 
-### 2. Setup Database & Seeds
-Run the automated SQLite migration and seed script:
+### 📝 Sample Timeseries Query (cURL)
+
+```bash
+curl -X GET "http://localhost:8080/api/v1/timeseries.php?bucket_size=1h&start_time=2026-08-01T00:00:00Z&end_time=2026-08-02T00:00:00Z" \
+  -H "X-API-Key: temporal_grid_api_key_2024"
+```
+
+---
+
+## 🛠️ Quick Start
+
+### 1. Initialize Database & Seed Defaults
 ```bash
 php setup_database_sqlite.php
 ```
-*Creates all tables (`users`, `api_keys`, `time_buckets`, `bucket_metrics`, `events`, `settings`) and seeds the default admin user and API keys.*
+*(Creates SQLite tables and seeds default `admin` / `temporal123` credentials).*
 
-### 3. Start the Web Server
+### 2. Run Automated Unit Tests
 ```bash
-php -S localhost:8000
+php tests/test_tmg.php
 ```
 
-### 4. Access the Dashboard
-- **URL:** `http://localhost:8000/login.php`
-- **Default Username:** `admin`
-- **Default Password:** `temporal123`
-
----
-
-## ⚙️ Background Worker & Automation
-
-The background worker continuously ingests external events, processes time buckets, derives rollups, and cleans expired data according to retention policies.
-
-### Continuous Daemon Mode:
+### 3. Start Local Server
 ```bash
-php worker.php --interval=10 --simulate
+php -S 0.0.0.0:8080
 ```
-*Or on Windows, double-click [`scripts/run_worker.bat`](file:///g:/shovt/tam%20olarak%20bitmeyenler/TEMPORAL%20MEMORY%20GRID/TEMPORAL%20MEMORY%20GRID/scripts/run_worker.bat).*
+Open [http://localhost:8080](http://localhost:8080) in your browser.
 
-### Single Run / Crontab Mode:
+### 4. Run Background Worker
 ```bash
-php worker.php --once --simulate
-```
-Add to Linux crontab (`crontab -e`):
-```bash
-* * * * * /usr/bin/php /path/to/project/worker.php --once >> /var/log/tmg_worker.log 2>&1
+# Continuous worker loop (or configure via systemd / cron)
+php worker.php
 ```
 
 ---
 
-## 📡 Real-Time Streaming (SSE)
+## 📂 Project Structure
 
-Connect to the live Server-Sent Events stream using JavaScript:
-
-```javascript
-const eventSource = new EventSource('/api/v1/stream.php?api_key=temporal_grid_api_key_2024&bucket_size=1m');
-
-eventSource.addEventListener('update', (event) => {
-    const data = JSON.parse(event.data);
-    console.log('Realtime Bucket Update:', data);
-});
+```
+temporal-memory-grid/
+├── config.php                      # Core configuration & cache directories
+├── database_pdo.php                # PDO database singleton connector
+├── setup_database_sqlite.php       # SQLite schema migrations & seeders
+├── aggregation_engine.php          # Multi-tier temporal bucketing engine
+├── alert_engine.php                # Alert evaluation & webhook dispatcher
+├── cache.php                       # High-speed file caching manager
+├── i18n.php                        # 5-Language internationalization engine
+├── system_logs.php                 # System activity & error logging
+├── utils.php                       # Time validation & format helpers
+├── worker.php                      # Background aggregation & pull worker
+├── index.php                       # Main dashboard (Chart.js charts & trends)
+├── anomalies.php                   # Anomaly inspection view
+├── trends.php                      # Comparative trend explorer
+├── settings.php                    # System, retention & webhook settings
+├── actions/                        # Background actions, API keys, and worker control
+├── api/v1/                         # REST API endpoints (timeseries, trend, anomalies, stream)
+├── docs/schemas/                   # Formal JSON schema validation files
+├── lang/                           # Multi-language dictionaries (tr, en, de, es, fr)
+├── tests/
+│   └── test_tmg.php                # Automated test suite (22 unit tests)
+└── scripts/
+    ├── cron.sh                     # Linux cron trigger script
+    └── run_worker.bat              # Windows background worker launcher
 ```
 
 ---
 
-## 🔌 REST API Reference
+## 📄 License
 
-All API requests require an API key passed via query parameter `?api_key=...` or HTTP Header `X-API-Key: ...`.
-
-### Default API Keys:
-- `temporal_grid_api_key_2024`
-- `demo_key_12345`
-
-| Endpoint | Method | Description |
-| :--- | :---: | :--- |
-| `/api/v1/timeseries.php` | `GET` | Get aggregated time-series buckets for specified metric and time range. |
-| `/api/v1/trend.php` | `GET` | Compare metrics between two time windows (primary vs comparison). |
-| `/api/v1/anomalies.php` | `GET` | Detect anomalies based on historical average or moving average deviation. |
-| `/api/v1/stream.php` | `GET` | Live Server-Sent Events (SSE) stream for real-time dashboard updates. |
-| `/api/v1/export.php` | `GET` | Export timeseries data in CSV or JSON format. |
-
-#### Example Timeseries Query:
-```bash
-curl -X GET "http://localhost:8000/api/v1/timeseries.php?api_key=temporal_grid_api_key_2024&metric_type=total_events&bucket_size=1m&start_time=2026-08-22T00:00:00Z&end_time=2026-08-22T12:00:00Z"
-```
-
-**JSON Response:**
-```json
-{
-  "success": true,
-  "message": "Success",
-  "data": {
-    "metric_type": "total_events",
-    "bucket_size": "1m",
-    "start_time": "2026-08-22 00:00:00",
-    "end_time": "2026-08-22 12:00:00",
-    "buckets": [
-      { "bucket_start": "2026-08-22 00:00:00", "count": 14 },
-      { "bucket_start": "2026-08-22 00:01:00", "count": 8 }
-    ]
-  }
-}
-```
+Distributed under the Apache 2.0 License. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 📁 Directory Structure
-
-```
-TEMPORAL MEMORY GRID/
-├── actions/                     # AJAX & Backend Handler endpoints
-│   ├── api_keys.php             # API Key management (CRUD)
-│   ├── change_password.php      # Password update endpoint
-│   ├── ingest_bridge.php        # JSON payload bridge & deduplication
-│   ├── worker_status.php        # Worker health & heartbeat API
-│   └── worker_control.php       # Manual worker trigger
-├── api/v1/                      # REST API Endpoints
-│   ├── timeseries.php           # Aggregated time buckets
-│   ├── trend.php                # Two-period comparison
-│   ├── anomalies.php            # Deviation & anomaly detector
-│   ├── stream.php               # Server-Sent Events (SSE)
-│   └── export.php               # CSV/JSON export
-├── docs/                        # API & Architecture documentation
-├── includes/                    # Header & Footer UI templates
-├── postman/                     # Ready-to-import Postman collection
-├── scripts/                     # Windows (.bat) and Linux (.sh) runners
-├── aggregation_engine.php       # Core temporal bucketing engine
-├── auth.php                     # Authentication & API Key validation
-├── cache.php                    # File-based caching service
-├── config.php                   # System configuration
-├── config.sample.php            # Sample configuration for deployments
-├── data_puller.php              # External feed fetcher & parser
-├── derive_rollups.php           # Rollup synthesis (1m -> 5m -> 15m -> 1h)
-├── index.php                    # Timeseries Dashboard UI
-├── trends.php                   # Trend Comparison UI
-├── anomalies.php                # Anomaly Detection UI
-├── settings.php                 # System, Worker & API Key Settings UI
-├── worker.php                   # Background Worker Daemon
-└── setup_database_sqlite.php    # SQLite schema & seed migration
-```
-
----
-
-## 🔒 Security & Authentication
-
-- **Web Panel:** Session-based authentication with Bcrypt password hashing (`PASSWORD_BCRYPT`).
-- **REST API:** Authenticated via `api_keys` table with individual rate limits (default: 100 requests/minute/IP).
-- **SQL Injection Prevention:** 100% Parameterized queries across SQLite and MySQL via PDO.
-- **XSS Protection:** Output sanitization (`htmlspecialchars`) and input validation across all interfaces.
-
----
-
-## 📄 License & Authors
-
-- **Author & Maintainer:** **ADA Creative Co.** ([https://adacreative.co](https://adacreative.co))
-- **Contact / Git:** [git@adacreative.co](mailto:git@adacreative.co)
-- **License:** Licensed under the [Apache License 2.0](LICENSE).
-
-
+<div align="center">
+Built with ⏱️ by <a href="https://github.com/adacreativeco">ADA Creative Co.</a>
+</div>
