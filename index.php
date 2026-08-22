@@ -3,6 +3,7 @@ require_once 'auth.php';
 require_once 'database_pdo.php';
 require_once 'aggregation_engine.php';
 require_once 'system_logs.php';
+require_once 'i18n.php';
 
 // Require login
 \Temporal\Auth::getInstance()->requireLogin();
@@ -24,18 +25,18 @@ include 'includes/header.php';
 <div class="px-4 py-6 sm:px-0">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-4 border-b border-gray-200">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Zaman Serisi Dashboard</h1>
-            <p class="text-gray-600">Event'leri zaman boyutunda analiz edin ve görselleştirin.</p>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2"><?php echo __('dashboard_title'); ?></h1>
+            <p class="text-gray-600"><?php echo __('dashboard_subtitle'); ?></p>
         </div>
         <!-- Live SSE Stream Toggle & Worker Badge -->
         <div class="mt-4 md:mt-0 flex flex-wrap items-center gap-3">
             <div id="worker-badge" class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-300 shadow-sm">
                 <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>
-                Worker: Yükleniyor...
+                <?php echo __('worker_badge_loading'); ?>
             </div>
             <button type="button" id="sse-toggle" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
                 <span id="sse-indicator" class="w-2.5 h-2.5 mr-2 rounded-full bg-gray-400"></span>
-                <span id="sse-text">Canlı Akış (SSE): Kapalı</span>
+                <span id="sse-text"><?php echo __('live_stream_toggle'); ?></span>
             </button>
         </div>
     </div>
@@ -43,24 +44,24 @@ include 'includes/header.php';
     <!-- Aggregation Status Card -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Agregasyon & Akış Durumu</h2>
-            <span id="live-update-time" class="text-xs text-gray-500">Son Güncelleme: Sayfa Yüklendi</span>
+            <h2 class="text-lg font-semibold text-gray-900"><?php echo __('agg_status_title'); ?></h2>
+            <span id="live-update-time" class="text-xs text-gray-500"><?php echo __('last_update'); ?>: -</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-blue-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-blue-600">Toplam Kovalar</div>
+                <div class="text-sm font-medium text-blue-600"><?php echo __('total_buckets'); ?></div>
                 <div id="kpi-total-buckets" class="text-2xl font-bold text-blue-900"><?php echo number_format($aggregation_status['total_buckets']); ?></div>
             </div>
             <div class="bg-green-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-green-600">Agregasyon Events</div>
+                <div class="text-sm font-medium text-green-600"><?php echo __('total_events_agg'); ?></div>
                 <div id="kpi-total-events" class="text-2xl font-bold text-green-900"><?php echo number_format($aggregation_status['total_events_aggregated']); ?></div>
             </div>
             <div class="bg-purple-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-purple-600">Son Kova Zamanı</div>
-                <div id="kpi-latest-bucket" class="text-sm font-semibold text-purple-900"><?php echo $aggregation_status['latest_bucket_end'] ? date('Y-m-d H:i', strtotime($aggregation_status['latest_bucket_end'])) : 'Yok'; ?></div>
+                <div class="text-sm font-medium text-purple-600"><?php echo __('latest_bucket_time'); ?></div>
+                <div id="kpi-latest-bucket" class="text-sm font-semibold text-purple-900"><?php echo $aggregation_status['latest_bucket_end'] ? date('Y-m-d H:i', strtotime($aggregation_status['latest_bucket_end'])) : __('none'); ?></div>
             </div>
             <div class="bg-amber-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-amber-600">Canlı Olaylar (5dk)</div>
+                <div class="text-sm font-medium text-amber-600"><?php echo __('live_5m_events'); ?></div>
                 <div id="kpi-recent-events" class="text-2xl font-bold text-amber-900">-</div>
             </div>
         </div>
@@ -68,33 +69,33 @@ include 'includes/header.php';
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtreler</h2>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('filters_title'); ?></h2>
         <form id="filter-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-                <label for="time-range" class="block text-sm font-medium text-gray-700 mb-2">Zaman Aralığı</label>
+                <label for="time-range" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('time_range'); ?></label>
                 <select id="time-range" name="time_range" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="today">Bugün</option>
-                    <option value="24h" selected>Son 24 Saat</option>
-                    <option value="7d">Son 7 Gün</option>
-                    <option value="custom">Özel Aralık</option>
+                    <option value="today"><?php echo __('today'); ?></option>
+                    <option value="24h" selected><?php echo __('last_24h'); ?></option>
+                    <option value="7d"><?php echo __('last_7d'); ?></option>
+                    <option value="custom"><?php echo __('custom_range'); ?></option>
                 </select>
             </div>
             
             <div>
-                <label for="bucket-size" class="block text-sm font-medium text-gray-700 mb-2">Bucket Boyutu</label>
+                <label for="bucket-size" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('bucket_size'); ?></label>
                 <select id="bucket-size" name="bucket_size" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="1m" selected>1 Dakika</option>
-                    <option value="5m">5 Dakika</option>
-                    <option value="15m">15 Dakika</option>
-                    <option value="1h">1 Saat</option>
-                    <option value="1d">1 Gün</option>
+                    <option value="1m" selected>1 min</option>
+                    <option value="5m">5 min</option>
+                    <option value="15m">15 min</option>
+                    <option value="1h">1 hour</option>
+                    <option value="1d">1 day</option>
                 </select>
             </div>
             
             <div>
-                <label for="event-type" class="block text-sm font-medium text-gray-700 mb-2">Event Türü</label>
+                <label for="event-type" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('event_type'); ?></label>
                 <select id="event-type" name="event_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Tümü</option>
+                    <option value=""><?php echo __('all'); ?></option>
                     <?php foreach ($event_types as $type): ?>
                         <option value="<?php echo htmlspecialchars($type['event_type']); ?>"><?php echo htmlspecialchars($type['event_type']); ?></option>
                     <?php endforeach; ?>
@@ -102,9 +103,9 @@ include 'includes/header.php';
             </div>
             
             <div>
-                <label for="source-id" class="block text-sm font-medium text-gray-700 mb-2">Kaynak</label>
+                <label for="source-id" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('source_id'); ?></label>
                 <select id="source-id" name="source_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Tümü</option>
+                    <option value=""><?php echo __('all'); ?></option>
                     <?php foreach ($event_sources as $source): ?>
                         <option value="<?php echo htmlspecialchars($source['source_id']); ?>"><?php echo htmlspecialchars($source['source_id']); ?></option>
                     <?php endforeach; ?>
@@ -115,21 +116,21 @@ include 'includes/header.php';
         <!-- Custom Date Range -->
         <div id="custom-date-range" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Başlangıç Tarihi</label>
+                <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('start_date'); ?></label>
                 <input type="datetime-local" id="start-date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2">Bitiş Tarihi</label>
+                <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('end_date'); ?></label>
                 <input type="datetime-local" id="end-date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
         
         <div class="mt-4 flex space-x-4">
-            <button type="button" id="apply-filters" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                Filtreleri Uygula
+            <button type="button" id="apply-filters" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
+                <?php echo __('apply_filters'); ?>
             </button>
             <button type="button" id="refresh-data" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                Yenile
+                <?php echo __('refresh'); ?>
             </button>
         </div>
     </div>
@@ -146,7 +147,7 @@ include 'includes/header.php';
                     </div>
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500">Toplam Event</div>
+                    <div class="text-sm font-medium text-gray-500"><?php echo __('total_events'); ?></div>
                     <div id="total-events" class="text-2xl font-semibold text-gray-900">-</div>
                 </div>
             </div>
@@ -162,7 +163,7 @@ include 'includes/header.php';
                     </div>
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500">En Yoğun Bucket</div>
+                    <div class="text-sm font-medium text-gray-500"><?php echo __('peak_bucket'); ?></div>
                     <div id="peak-bucket" class="text-lg font-semibold text-gray-900">-</div>
                 </div>
             </div>
@@ -178,7 +179,7 @@ include 'includes/header.php';
                     </div>
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500">Ortalama / Bucket</div>
+                    <div class="text-sm font-medium text-gray-500"><?php echo __('avg_per_bucket'); ?></div>
                     <div id="avg-per-bucket" class="text-2xl font-semibold text-gray-900">-</div>
                 </div>
             </div>
@@ -188,13 +189,13 @@ include 'includes/header.php';
     <!-- Chart -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Zaman Serisi Grafiği</h2>
+            <h2 class="text-lg font-semibold text-gray-900"><?php echo __('timeseries_chart'); ?></h2>
             <div class="flex space-x-2">
-                <button id="export-csv" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                    CSV Export
+                <button id="export-csv" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
+                    <?php echo __('csv_export'); ?>
                 </button>
-                <button id="export-json" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                    JSON Export
+                <button id="export-json" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
+                    <?php echo __('json_export'); ?>
                 </button>
             </div>
         </div>
@@ -267,7 +268,7 @@ function startSseStream() {
     const sseIndicator = document.getElementById('sse-indicator');
     const sseText = document.getElementById('sse-text');
 
-    sseText.textContent = 'Canlı Akış: Bağlanıyor...';
+    sseText.textContent = window.t('live_stream_connecting', 'Connecting...');
     sseIndicator.className = 'w-2.5 h-2.5 mr-2 rounded-full bg-amber-400 animate-pulse';
 
     const url = `/api/v1/stream.php?api_key=temporal_grid_api_key_2024&bucket_size=${encodeURIComponent(bucketSize)}`;
@@ -281,9 +282,9 @@ function startSseStream() {
                 isSseActive = true;
                 sseToggle.className = 'inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all duration-200 bg-red-50 border border-red-300 text-red-700 hover:bg-red-100';
                 sseIndicator.className = 'w-2.5 h-2.5 mr-2 rounded-full bg-red-500 animate-ping';
-                sseText.textContent = `🔴 Canlı Akış Aktif (${payload.bucket_size})`;
+                sseText.textContent = `🔴 ${window.t('live_stream_active', 'Live Active (%s)').replace('%s', payload.bucket_size)}`;
 
-                document.getElementById('live-update-time').textContent = 'Son Canlı Veri: ' + new Date().toLocaleTimeString('tr-TR');
+                document.getElementById('live-update-time').textContent = window.t('last_live_data', 'Last Live Data') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'tr-TR');
 
                 // Update KPIs
                 if (payload.kpis) {
@@ -313,7 +314,7 @@ function startSseStream() {
 
         eventSource.onerror = function() {
             sseIndicator.className = 'w-2.5 h-2.5 mr-2 rounded-full bg-amber-500 animate-pulse';
-            sseText.textContent = 'Canlı Akış: Yeniden Bağlanıyor...';
+            sseText.textContent = window.t('live_stream_connecting', 'Connecting...');
         };
 
     } catch (err) {
@@ -334,7 +335,7 @@ function stopSseStream() {
 
     sseToggle.className = 'inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition-all duration-200 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50';
     sseIndicator.className = 'w-2.5 h-2.5 mr-2 rounded-full bg-gray-400';
-    sseText.textContent = 'Canlı Akış (SSE): Kapalı';
+    sseText.textContent = window.t('live_stream_toggle', 'Live Stream (SSE): Off');
 }
 
 async function checkWorkerStatus() {
@@ -346,10 +347,10 @@ async function checkWorkerStatus() {
             const d = json.data;
             if (d.is_live) {
                 badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-300 shadow-sm';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span>Worker: Aktif (${d.seconds_ago !== null ? d.seconds_ago + 's önce' : 'canlı'})`;
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span>Worker: ${window.t('active', 'Active')} (${d.seconds_ago !== null ? d.seconds_ago + 's' : ''})`;
             } else {
                 badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-300 shadow-sm';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>Worker: Çevrimdışı`;
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>${window.t('worker_badge_offline', 'Worker: Offline')}`;
             }
         }
     } catch (e) {
@@ -366,11 +367,10 @@ async function updateChart() {
         
         updateSummaryCards(data);
         renderChart(data);
-        document.getElementById('live-update-time').textContent = 'Son Güncelleme: ' + new Date().toLocaleTimeString('tr-TR');
+        document.getElementById('live-update-time').textContent = window.t('last_update', 'Last Update') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'tr-TR');
         
     } catch (error) {
         console.error('Error updating chart:', error);
-        alert('Veri yüklenirken hata oluştu: ' + error.message);
     }
 }
 
@@ -399,7 +399,7 @@ function getFilterParams() {
             startTime = document.getElementById('start-date').value;
             endTime = document.getElementById('end-date').value;
             if (!startTime || !endTime) {
-                throw new Error('Lütfen özel tarih aralığı seçin');
+                throw new Error('Please select date range');
             }
             break;
     }
@@ -447,9 +447,9 @@ function renderChart(data) {
     chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: (data.buckets || []).map(bucket => new Date(bucket.bucket_start).toLocaleString('tr-TR')),
+            labels: (data.buckets || []).map(bucket => new Date(bucket.bucket_start).toLocaleString(window.TMG_LOCALE || 'tr-TR')),
             datasets: [{
-                label: 'Toplam Event Sayısı',
+                label: window.t('total_events', 'Total Events'),
                 data: (data.buckets || []).map(bucket => bucket.count),
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: 'rgba(59, 130, 246, 0.12)',
@@ -467,14 +467,14 @@ function renderChart(data) {
             plugins: {
                 title: {
                     display: true,
-                    text: isSseActive ? '⚡ Gerçek Zamanlı Canlı Kova Akışı' : 'Zaman Serisi Grafiği'
+                    text: isSseActive ? window.t('live_chart_title', '⚡ Real-time Live Bucket Stream') : window.t('timeseries_chart', 'Time-Series Chart')
                 },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
                     callbacks: {
                         label: function(context) {
-                            return 'Event Sayısı: ' + formatNumber(context.parsed.y);
+                            return window.t('total_events', 'Events') + ': ' + formatNumber(context.parsed.y);
                         }
                     }
                 }
@@ -484,14 +484,14 @@ function renderChart(data) {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Zaman'
+                        text: window.t('time_range', 'Time')
                     }
                 },
                 y: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Event Sayısı'
+                        text: window.t('total_events', 'Event Count')
                     },
                     beginAtZero: true
                 }
@@ -524,7 +524,7 @@ async function exportData(format) {
         
     } catch (error) {
         console.error('Export error:', error);
-        alert('Export sırasında hata oluştu: ' + error.message);
+        alert('Export error: ' + error.message);
     }
 }
 </script>

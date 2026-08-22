@@ -2,6 +2,7 @@
 require_once 'auth.php';
 require_once 'cache.php';
 require_once 'system_logs.php';
+require_once 'i18n.php';
 \Temporal\Auth::getInstance()->requireLogin();
 $current_page = 'settings';
 include 'includes/header.php';
@@ -9,41 +10,41 @@ include 'includes/header.php';
 
 <div class="px-4 py-6 sm:px-0">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Sistem Ayarları & Yönetim</h1>
-        <p class="text-gray-600">Worker otomasyonu, API anahtarları, güvenlik ve veri saklama politikalarını yönetin.</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2"><?php echo __('settings_title'); ?></h1>
+        <p class="text-gray-600"><?php echo __('settings_subtitle'); ?></p>
     </div>
 
     <!-- Worker & Automation Card -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-100">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 pb-3 border-b border-gray-100">
             <div>
-                <h2 class="text-lg font-semibold text-gray-900">Arka Plan Otomasyonu (Worker / Daemon)</h2>
-                <p class="text-sm text-gray-500">Otomatik veri çekme, zaman kovalama, rollup türetme ve günlük temizlik motoru.</p>
+                <h2 class="text-lg font-semibold text-gray-900"><?php echo __('worker_card_title'); ?></h2>
+                <p class="text-sm text-gray-500"><?php echo __('worker_card_desc'); ?></p>
             </div>
             <div id="settings-worker-badge" class="mt-2 md:mt-0 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border">
-                <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> Kontrol Ediliyor...
+                <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> <?php echo __('worker_badge_loading'); ?>
             </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block">Son Kalp Atışı (Heartbeat)</span>
+                <span class="text-xs text-gray-500 block"><?php echo __('last_heartbeat'); ?></span>
                 <span id="worker-last-beat" class="text-sm font-semibold text-gray-800">-</span>
             </div>
             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block">Döngü Aralığı</span>
-                <span id="worker-interval" class="text-sm font-semibold text-gray-800">10 saniye</span>
+                <span class="text-xs text-gray-500 block"><?php echo __('loop_interval'); ?></span>
+                <span id="worker-interval" class="text-sm font-semibold text-gray-800">10s</span>
             </div>
             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block">Son Durum / Log</span>
+                <span class="text-xs text-gray-500 block"><?php echo __('last_status'); ?></span>
                 <span id="worker-status-text" class="text-sm font-semibold text-gray-800">-</span>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-3">
             <button type="button" id="btn-run-worker-once" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow-sm transition">
-                ⚡ Döngüyü Şimdi Çalıştır (Run Once)
+                <?php echo __('run_worker_once'); ?>
             </button>
             <span class="text-xs text-gray-500">
-                Sürekli çalıştırmak için terminalden: <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">php worker.php</code> veya <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">scripts\run_worker.bat</code>
+                CLI: <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">php worker.php</code> | <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">scripts\run_worker.bat</code>
             </span>
         </div>
         <div id="worker-action-result" class="text-sm text-gray-600 mt-2"></div>
@@ -55,35 +56,35 @@ include 'includes/header.php';
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">API Anahtarları (REST API Keys)</h2>
-                    <p class="text-xs text-gray-500">Harici sistemlerin API'ye erişimi için kullanılan anahtarlar.</p>
+                    <h2 class="text-lg font-semibold text-gray-900"><?php echo __('api_keys_title'); ?></h2>
+                    <p class="text-xs text-gray-500"><?php echo __('api_keys_desc'); ?></p>
                 </div>
                 <button type="button" id="btn-show-create-key" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm">
-                    + Yeni Anahtar
+                    <?php echo __('create_new_key'); ?>
                 </button>
             </div>
 
             <!-- Create Key Form (Hidden by default) -->
             <div id="create-key-box" class="hidden mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 class="text-sm font-semibold text-blue-900 mb-2">Yeni API Anahtarı Oluştur</h3>
+                <h3 class="text-sm font-semibold text-blue-900 mb-2"><?php echo __('create_new_key'); ?></h3>
                 <div class="space-y-2">
                     <div>
-                        <label class="block text-xs font-medium text-gray-700">Anahtar Adı / Açıklama</label>
-                        <input id="new-key-name" type="text" placeholder="Örn: Realtime Map Grid Entegrasyonu" class="w-full px-3 py-1.5 text-sm border rounded-md">
+                        <label class="block text-xs font-medium text-gray-700"><?php echo __('key_name'); ?></label>
+                        <input id="new-key-name" type="text" placeholder="e.g. Production Mobile App" class="w-full px-3 py-1.5 text-sm border rounded-md">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-gray-700">Rate Limit (istek/dk)</label>
+                            <label class="block text-xs font-medium text-gray-700"><?php echo __('key_rate_limit'); ?></label>
                             <input id="new-key-rate" type="number" value="100" class="w-full px-3 py-1.5 text-sm border rounded-md">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-700">Özel Anahtar (opsiyonel)</label>
-                            <input id="new-key-custom" type="text" placeholder="Otomatik üretilir" class="w-full px-3 py-1.5 text-sm border rounded-md">
+                            <label class="block text-xs font-medium text-gray-700"><?php echo __('key_custom'); ?></label>
+                            <input id="new-key-custom" type="text" placeholder="Auto-generated" class="w-full px-3 py-1.5 text-sm border rounded-md">
                         </div>
                     </div>
                     <div class="flex space-x-2 pt-1">
-                        <button type="button" id="btn-save-key" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md">Oluştur</button>
-                        <button type="button" id="btn-cancel-key" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md">İptal</button>
+                        <button type="button" id="btn-save-key" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md"><?php echo __('create'); ?></button>
+                        <button type="button" id="btn-cancel-key" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-md"><?php echo __('cancel'); ?></button>
                     </div>
                 </div>
             </div>
@@ -93,14 +94,14 @@ include 'includes/header.php';
                 <table class="min-w-full divide-y divide-gray-200 text-xs">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-3 py-2 text-left font-medium text-gray-500">Ad</th>
-                            <th class="px-3 py-2 text-left font-medium text-gray-500">Anahtar (Key)</th>
-                            <th class="px-3 py-2 text-left font-medium text-gray-500">Durum</th>
-                            <th class="px-3 py-2 text-right font-medium text-gray-500">İşlem</th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('key_table_name'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('key_table_key'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('key_table_status'); ?></th>
+                            <th class="px-3 py-2 text-right font-medium text-gray-500"><?php echo __('key_table_action'); ?></th>
                         </tr>
                     </thead>
                     <tbody id="api-keys-table" class="bg-white divide-y divide-gray-100">
-                        <tr><td colspan="4" class="px-3 py-3 text-center text-gray-400">Yükleniyor...</td></tr>
+                        <tr><td colspan="4" class="px-3 py-3 text-center text-gray-400">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -109,26 +110,26 @@ include 'includes/header.php';
 
         <!-- Security / Password Change -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-1">Güvenlik & Şifre Değiştir</h2>
-            <p class="text-xs text-gray-500 mb-4">Yönetici hesabı giriş şifrenizi güncelleyin.</p>
+            <h2 class="text-lg font-semibold text-gray-900 mb-1"><?php echo __('security_title'); ?></h2>
+            <p class="text-xs text-gray-500 mb-4"><?php echo __('security_desc'); ?></p>
             <form id="password-form" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-medium text-gray-700">Mevcut Şifre</label>
+                    <label class="block text-xs font-medium text-gray-700"><?php echo __('current_password'); ?></label>
                     <input id="current-password" type="password" class="mt-1 w-full px-3 py-1.5 text-sm border rounded-md" placeholder="••••••••">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-gray-700">Yeni Şifre</label>
-                        <input id="new-password" type="password" class="mt-1 w-full px-3 py-1.5 text-sm border rounded-md" placeholder="En az 6 karakter">
+                        <label class="block text-xs font-medium text-gray-700"><?php echo __('new_password'); ?></label>
+                        <input id="new-password" type="password" class="mt-1 w-full px-3 py-1.5 text-sm border rounded-md" placeholder="Min 6 characters">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-700">Yeni Şifre (Tekrar)</label>
-                        <input id="confirm-password" type="password" class="mt-1 w-full px-3 py-1.5 text-sm border rounded-md" placeholder="Tekrar yazın">
+                        <label class="block text-xs font-medium text-gray-700"><?php echo __('confirm_password'); ?></label>
+                        <input id="confirm-password" type="password" class="mt-1 w-full px-3 py-1.5 text-sm border rounded-md" placeholder="Repeat new password">
                     </div>
                 </div>
                 <div class="pt-1">
                     <button type="button" id="btn-change-password" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 py-2 rounded-md shadow-sm">
-                        Şifreyi Güncelle
+                        <?php echo __('update_password'); ?>
                     </button>
                 </div>
             </form>
@@ -137,19 +138,19 @@ include 'includes/header.php';
 
         <!-- Retention Settings -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Veri Saklama (Retention)</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('retention_title'); ?></h2>
             <form id="retention-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Ham Event Retention (gün)</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo __('raw_event_retention'); ?></label>
                     <input id="raw-days" type="number" value="60" class="mt-1 w-full px-3 py-2 border rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Agregasyon Retention (gün)</label>
+                    <label class="block text-sm font-medium text-gray-700"><?php echo __('agg_retention'); ?></label>
                     <input id="agg-days" type="number" value="365" class="mt-1 w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="flex space-x-2">
-                    <button type="button" id="save-retention" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md">Kaydet</button>
-                    <button type="button" id="run-cleanup" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-md">Cleanup Çalıştır</button>
+                    <button type="button" id="save-retention" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('save'); ?></button>
+                    <button type="button" id="run-cleanup" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('run_cleanup'); ?></button>
                 </div>
             </form>
             <div id="retention-result" class="text-sm text-gray-600 mt-3"></div>
@@ -157,17 +158,17 @@ include 'includes/header.php';
 
         <!-- Cache Management -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Önbellek (Cache)</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('cache_title'); ?></h2>
             <div class="space-y-3">
-                <p class="text-sm text-gray-600">Sorgu sonuçları performans için dosya tabanlı önbellekte tutulur.</p>
-                <button id="clear-cache" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md">Önbelleği Temizle</button>
+                <p class="text-sm text-gray-600"><?php echo __('cache_desc'); ?></p>
+                <button id="clear-cache" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('clear_cache'); ?></button>
                 <div id="cache-result" class="text-sm text-gray-600"></div>
             </div>
         </div>
 
         <!-- External Live API Configuration -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Harici Olay Kaynağı API (RTEG)</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('external_api_title'); ?></h2>
             <form id="external-api-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">API URL</label>
@@ -175,23 +176,23 @@ include 'includes/header.php';
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Header Adı</label>
+                        <label class="block text-sm font-medium text-gray-700"><?php echo __('header_name'); ?></label>
                         <input id="external-api-header" type="text" class="mt-1 w-full px-3 py-2 border rounded-md" value="X-API-Key">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Token / Key (ops.)</label>
+                        <label class="block text-sm font-medium text-gray-700"><?php echo __('token_optional'); ?></label>
                         <input id="external-api-token" type="text" class="mt-1 w-full px-3 py-2 border rounded-md" placeholder="test_key">
                     </div>
                 </div>
                 <div>
                     <label class="inline-flex items-center">
                         <input id="external-api-insecure" type="checkbox" class="mr-2">
-                        <span class="text-sm text-gray-700">SSL doğrulamasını atla (self-signed için)</span>
+                        <span class="text-sm text-gray-700"><?php echo __('insecure_ssl'); ?></span>
                     </label>
                 </div>
                 <div class="space-x-2 pt-1">
-                    <button type="button" id="save-external-api" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md">Kaydet</button>
-                    <button type="button" id="test-external-api" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md">Bağlantıyı Test Et</button>
+                    <button type="button" id="save-external-api" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('save'); ?></button>
+                    <button type="button" id="test-external-api" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('test_connection'); ?></button>
                 </div>
             </form>
             <div id="external-api-result" class="text-sm text-gray-600 mt-3"></div>
@@ -199,11 +200,11 @@ include 'includes/header.php';
 
         <!-- Manual JSON Import -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Manuel JSON Olay İçe Aktar</h2>
-            <p class="text-sm text-gray-600 mb-2">Harici API yanıtını veya ham olay JSON dizisini yapıştırıp içe aktarın.</p>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('manual_json_title'); ?></h2>
+            <p class="text-sm text-gray-600 mb-2"><?php echo __('manual_json_desc'); ?></p>
             <textarea id="manual-json" class="w-full h-32 px-3 py-2 border rounded-md font-mono text-xs" placeholder='[{"type":"vehicle_movement","source":"sensor_01","timestamp":1733872741}]'></textarea>
             <div class="mt-3">
-                <button type="button" id="import-manual-json" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md">İçe Aktar & Kovalara İşle</button>
+                <button type="button" id="import-manual-json" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('import_and_aggregate'); ?></button>
             </div>
             <div id="manual-import-result" class="text-sm text-gray-600 mt-3"></div>
         </div>
@@ -248,13 +249,13 @@ async function loadWorkerStatus() {
             const badge = document.getElementById('settings-worker-badge');
             if (d.is_live) {
                 badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-300';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span> ÇALIŞIYOR (${d.seconds_ago !== null ? d.seconds_ago + 's önce' : 'Aktif'})`;
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span> ${window.t('active', 'Active')} (${d.seconds_ago !== null ? d.seconds_ago + 's' : ''})`;
             } else {
                 badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-300';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> ÇEVRİMDIŞI`;
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> ${window.t('passive', 'Offline')}`;
             }
-            document.getElementById('worker-last-beat').textContent = d.last_beat || 'Yok';
-            document.getElementById('worker-interval').textContent = d.interval + ' saniye';
+            document.getElementById('worker-last-beat').textContent = d.last_beat || window.t('none', 'None');
+            document.getElementById('worker-interval').textContent = d.interval + 's';
             document.getElementById('worker-status-text').textContent = d.status_text || '-';
         }
     } catch (e) {}
@@ -264,19 +265,19 @@ async function runWorkerOnce() {
     const btn = document.getElementById('btn-run-worker-once');
     const resultBox = document.getElementById('worker-action-result');
     btn.disabled = true;
-    btn.textContent = '⏳ Çalıştırılıyor...';
+    btn.textContent = '⏳ ...';
     resultBox.textContent = '';
 
     try {
         const res = await fetch('/actions/worker_control.php', { method: 'POST' });
         const json = await res.json();
-        resultBox.textContent = json.message || (json.success ? 'Tamamlandı' : 'Hata');
+        resultBox.textContent = json.message || (json.success ? 'Done' : 'Error');
         loadWorkerStatus();
     } catch (e) {
-        resultBox.textContent = 'Hata: ' + e.message;
+        resultBox.textContent = 'Error: ' + e.message;
     } finally {
         btn.disabled = false;
-        btn.textContent = '⚡ Döngüyü Şimdi Çalıştır (Run Once)';
+        btn.textContent = window.t('run_worker_once', '⚡ Run Cycle Now (Run Once)');
     }
 }
 
@@ -286,7 +287,7 @@ async function loadApiKeys() {
         const json = await res.json();
         const tbody = document.getElementById('api-keys-table');
         if (!json.success || !json.data || json.data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-gray-400">Henüz API anahtarı bulunmuyor.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-gray-400">No API keys found.</td></tr>';
             return;
         }
 
@@ -295,21 +296,21 @@ async function loadApiKeys() {
                 <td class="px-3 py-2 font-medium text-gray-800">${escapeHtml(k.name)}</td>
                 <td class="px-3 py-2 font-mono text-gray-600 flex items-center gap-1">
                     <span>${escapeHtml(k.key_value.substring(0, 14))}...</span>
-                    <button onclick="copyToClipboard('${escapeHtml(k.key_value)}')" class="text-blue-500 hover:text-blue-700 text-xs px-1 py-0.5 bg-blue-50 rounded" title="Kopyala">📋</button>
+                    <button onclick="copyToClipboard('${escapeHtml(k.key_value)}')" class="text-blue-500 hover:text-blue-700 text-xs px-1 py-0.5 bg-blue-50 rounded" title="Copy">📋</button>
                 </td>
                 <td class="px-3 py-2">
                     <button onclick="toggleApiKey(${k.id}, ${k.is_active ? 0 : 1})" class="px-2 py-0.5 rounded-full text-xs font-semibold ${k.is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}">
-                        ${k.is_active ? 'Aktif' : 'Pasif'}
+                        ${k.is_active ? window.t('active', 'Active') : window.t('passive', 'Inactive')}
                     </button>
                 </td>
                 <td class="px-3 py-2 text-right">
-                    <button onclick="deleteApiKey(${k.id})" class="text-red-500 hover:text-red-700 font-semibold text-xs">Sil</button>
+                    <button onclick="deleteApiKey(${k.id})" class="text-red-500 hover:text-red-700 font-semibold text-xs">${window.t('delete', 'Delete')}</button>
                 </td>
             </tr>
         `).join('');
 
     } catch (e) {
-        document.getElementById('api-keys-table').innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-red-400">API Anahtarları yüklenemedi.</td></tr>';
+        document.getElementById('api-keys-table').innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-red-400">Error loading API keys.</td></tr>';
     }
 }
 
@@ -318,7 +319,7 @@ async function createApiKey() {
     const rate = document.getElementById('new-key-rate').value;
     const custom = document.getElementById('new-key-custom').value.trim();
 
-    if (!name) { alert('Lütfen bir anahtar adı yazın.'); return; }
+    if (!name) { alert('Please enter key name'); return; }
 
     const fd = new FormData();
     fd.append('action', 'create');
@@ -332,10 +333,10 @@ async function createApiKey() {
         document.getElementById('new-key-name').value = '';
         document.getElementById('new-key-custom').value = '';
         document.getElementById('create-key-box').classList.add('hidden');
-        document.getElementById('key-result').textContent = 'Anahtar oluşturuldu: ' + json.data.key_value;
+        document.getElementById('key-result').textContent = 'Key created: ' + json.data.key_value;
         loadApiKeys();
     } else {
-        alert(json.error || 'Hata oluştu');
+        alert(json.error || 'Error creating key');
     }
 }
 
@@ -349,7 +350,7 @@ async function toggleApiKey(id, status) {
 }
 
 async function deleteApiKey(id) {
-    if (!confirm('Bu API anahtarını silmek istediğinize emin misiniz?')) return;
+    if (!confirm('Are you sure you want to delete this key?')) return;
     const fd = new FormData();
     fd.append('action', 'delete');
     fd.append('id', id);
@@ -359,7 +360,7 @@ async function deleteApiKey(id) {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('API Anahtarı panoya kopyalandı: ' + text);
+        alert('Copied to clipboard: ' + text);
     });
 }
 
@@ -374,13 +375,13 @@ async function changePassword() {
     const resultBox = document.getElementById('password-result');
 
     if (!current || !next || !confirm) {
-        resultBox.textContent = 'Lütfen tüm alanları doldurun.';
+        resultBox.textContent = 'Please fill in all fields.';
         resultBox.className = 'text-xs text-red-600 mt-2';
         return;
     }
 
     if (next !== confirm) {
-        resultBox.textContent = 'Yeni şifreler eşleşmiyor.';
+        resultBox.textContent = 'Passwords do not match.';
         resultBox.className = 'text-xs text-red-600 mt-2';
         return;
     }
@@ -393,13 +394,13 @@ async function changePassword() {
     const res = await fetch('/actions/change_password.php', { method: 'POST', body: fd });
     const json = await res.json();
     if (json.success) {
-        resultBox.textContent = json.message || 'Şifre güncellendi.';
+        resultBox.textContent = json.message || 'Password updated successfully.';
         resultBox.className = 'text-xs text-green-600 mt-2';
         document.getElementById('current-password').value = '';
         document.getElementById('new-password').value = '';
         document.getElementById('confirm-password').value = '';
     } else {
-        resultBox.textContent = json.error || 'Hata oluştu.';
+        resultBox.textContent = json.error || 'Error updating password.';
         resultBox.className = 'text-xs text-red-600 mt-2';
     }
 }
@@ -421,20 +422,20 @@ async function saveSettings(){
     formData.append('agg_retention_days', agg);
     const res = await fetch('/actions/save_settings.php', { method: 'POST', body: formData });
     const json = await res.json();
-    document.getElementById('retention-result').textContent = json.message || 'Kaydedildi';
+    document.getElementById('retention-result').textContent = json.message || 'Saved';
 }
 
 async function runCleanup(){
     const res = await fetch('/actions/run_cleanup.php');
     const json = await res.json();
-    alert(json.message || 'Cleanup bitti');
+    alert(json.message || 'Cleanup complete');
 }
 
 async function clearCache(){
     fetch('/actions/clear_cache.php').then(r=>r.text()).then(t=>{
-        document.getElementById('cache-result').textContent = 'Cache temizlendi.';
+        document.getElementById('cache-result').textContent = 'Cache cleared.';
     }).catch(()=>{
-        document.getElementById('cache-result').textContent = 'Cache temizlenirken hata oluştu';
+        document.getElementById('cache-result').textContent = 'Error clearing cache';
     });
 }
 
@@ -457,7 +458,7 @@ async function saveExternalApi(){
     fd.append('external_api_insecure', document.getElementById('external-api-insecure').checked ? '1' : '0');
     const res = await fetch('/actions/save_external_api.php', { method: 'POST', body: fd });
     const json = await res.json();
-    document.getElementById('external-api-result').textContent = json.message || 'Kaydedildi';
+    document.getElementById('external-api-result').textContent = json.message || 'Saved';
 }
 
 async function testExternalApi(){
@@ -468,30 +469,30 @@ async function testExternalApi(){
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('application/json')) {
         const json = await res.json().catch(()=>null);
-        document.getElementById('external-api-result').textContent = json && json.success ? (json.message + ' (count: ' + (json.data?.count ?? '-') + ')') : ((json && json.error) || 'Hata');
+        document.getElementById('external-api-result').textContent = json && json.success ? (json.message + ' (count: ' + (json.data?.count ?? '-') + ')') : ((json && json.error) || 'Error');
     } else {
         const text = await res.text();
-        document.getElementById('external-api-result').textContent = text || 'Boş yanıt';
+        document.getElementById('external-api-result').textContent = text || 'Empty response';
     }
 }
 
 async function importManualJson(){
     try {
         let txt = document.getElementById('manual-json').value || '';
-        if (!txt.trim()) { document.getElementById('manual-import-result').textContent = 'Boş içerik'; return; }
+        if (!txt.trim()) { document.getElementById('manual-import-result').textContent = 'Empty payload'; return; }
         txt = txt.trim();
         if (txt.startsWith('```')) { txt = txt.replace(/^```[\s\S]*?\n/, '').replace(/\n```$/, '').trim(); }
         let payload = null;
         try { payload = JSON.parse(txt); } catch(e) { payload = null; }
-        if (!payload || typeof payload !== 'object') { document.getElementById('manual-import-result').textContent = 'Geçersiz JSON verisi'; return; }
+        if (!payload || typeof payload !== 'object') { document.getElementById('manual-import-result').textContent = 'Invalid JSON payload'; return; }
         const res = await fetch('/actions/ingest_bridge.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         const text = await res.text();
         let json = null;
         try { json = JSON.parse(text); } catch(e) { json = null; }
-        const msg = json && json.success ? (json.message + ' (inserted: ' + (json.data?.inserted_events ?? '-') + ', buckets: ' + (json.data?.processed_buckets ?? '-') + ')') : ((json && json.error) || 'Hata');
+        const msg = json && json.success ? (json.message + ' (inserted: ' + (json.data?.inserted_events ?? '-') + ', buckets: ' + (json.data?.processed_buckets ?? '-') + ')') : ((json && json.error) || 'Error');
         document.getElementById('manual-import-result').textContent = msg;
     } catch (e) {
-        document.getElementById('manual-import-result').textContent = 'Hata: ' + (e?.message || e);
+        document.getElementById('manual-import-result').textContent = 'Error: ' + (e?.message || e);
     }
 }
 </script>

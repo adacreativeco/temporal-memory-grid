@@ -1,5 +1,6 @@
 <?php
 require_once 'auth.php';
+require_once 'i18n.php';
 \Temporal\Auth::getInstance()->requireLogin();
 $current_page = 'anomalies';
 include 'includes/header.php';
@@ -7,82 +8,82 @@ include 'includes/header.php';
 
 <div class="px-4 py-6 sm:px-0">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Anomali Görünümü</h1>
-        <p class="text-gray-600">Seçilen aralıkta normal dışı kovaları işaretleyin.</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2"><?php echo __('anomalies_title'); ?></h1>
+        <p class="text-gray-600"><?php echo __('anomalies_subtitle'); ?></p>
     </div>
 
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Parametreler</h2>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('filters_title'); ?></h2>
         <form id="anomaly-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Metrik</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('metric'); ?></label>
                 <select id="metric-type" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="total_events" selected>Toplam Event</option>
-                    <option value="events_by_type">Event Türüne Göre</option>
-                    <option value="events_by_source">Kaynağa Göre</option>
+                    <option value="total_events" selected><?php echo __('total_events'); ?></option>
+                    <option value="events_by_type">Event Type</option>
+                    <option value="events_by_source">Source ID</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Bucket Boyutu</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('bucket_size'); ?></label>
                 <select id="bucket-size" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="1m">1 Dakika</option>
-                    <option value="5m" selected>5 Dakika</option>
-                    <option value="15m">15 Dakika</option>
-                    <option value="1h">1 Saat</option>
-                    <option value="1d">1 Gün</option>
+                    <option value="1m">1 min</option>
+                    <option value="5m" selected>5 min</option>
+                    <option value="15m">15 min</option>
+                    <option value="1h">1 hour</option>
+                    <option value="1d">1 day</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Baseline</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('baseline'); ?></label>
                 <select id="baseline" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="historical" selected>Tarihsel Ortalama</option>
-                    <option value="moving_average">Hareketli Ortalama</option>
+                    <option value="historical" selected><?php echo __('historical_avg'); ?></option>
+                    <option value="moving_average"><?php echo __('moving_avg'); ?></option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">MA Pencere</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('ma_window'); ?></label>
                 <input id="ma-window" type="number" value="6" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Eşik (%)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('threshold_percent'); ?></label>
                 <input id="threshold" type="number" value="50" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Başlangıç</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('start_date'); ?></label>
                 <input id="start" type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Bitiş</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('end_date'); ?></label>
                 <input id="end" type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Event Türü (ops.)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('event_type'); ?></label>
                 <input id="type" type="text" placeholder="sensor_alert" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Source ID (ops.)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('source_id'); ?></label>
                 <input id="source-id" type="text" placeholder="sensor_001" class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
         </form>
         <div class="mt-4">
-            <button id="run-anomaly" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium">Anomalileri Bul</button>
+            <button id="run-anomaly" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition"><?php echo __('find_anomalies'); ?></button>
         </div>
     </div>
 
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 class="text-md font-semibold text-gray-900 mb-2">Zaman Serisi Grafiği</h3>
+        <h3 class="text-md font-semibold text-gray-900 mb-2"><?php echo __('timeseries_chart'); ?></h3>
         <div class="h-64"><canvas id="anomaly-chart"></canvas></div>
     </div>
 
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-md font-semibold text-gray-900 mb-2">Anomali Kovaları</h3>
+        <h3 class="text-md font-semibold text-gray-900 mb-2"><?php echo __('anomaly_buckets'); ?></h3>
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Bucket Başlangıç</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Gözlenen</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Beklenen</th>
-                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Sapma (%)</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><?php echo __('bucket_start'); ?></th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><?php echo __('observed_value'); ?></th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><?php echo __('expected_value'); ?></th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"><?php echo __('deviation_percent'); ?></th>
                 </tr>
             </thead>
             <tbody id="anomaly-table" class="bg-white divide-y divide-gray-200"></tbody>
@@ -122,7 +123,7 @@ async function runAnomaly(){
     Object.entries(params).forEach(([k,v])=>{ if(v!==null && v!==undefined) url.searchParams.append(k,v); });
     const resp = await fetch(url);
     const json = await resp.json();
-    if(!resp.ok){ alert(json.error||'Hata'); return; }
+    if(!resp.ok){ alert(json.error||'Error'); return; }
     const d = json.data;
     renderTable(d.anomaly_buckets);
     renderChart(d);
@@ -146,24 +147,28 @@ function collectParams(){
 function renderTable(rows){
     const tbody = document.getElementById('anomaly-table');
     tbody.innerHTML = '';
+    if (!rows || rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-gray-400 text-sm">No anomalies found for selected criteria.</td></tr>`;
+        return;
+    }
     rows.forEach(r=>{
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td class="px-4 py-2">${new Date(r.bucket_start).toLocaleString('tr-TR')}</td>
-                        <td class="px-4 py-2">${r.observed_value}</td>
-                        <td class="px-4 py-2">${r.expected_value}</td>
-                        <td class="px-4 py-2">${r.deviation_percent}%</td>`;
+        tr.innerHTML = `<td class="px-4 py-2 text-sm">${new Date(r.bucket_start).toLocaleString(window.TMG_LOCALE || 'tr-TR')}</td>
+                        <td class="px-4 py-2 text-sm font-semibold text-red-600">${r.observed_value}</td>
+                        <td class="px-4 py-2 text-sm">${r.expected_value}</td>
+                        <td class="px-4 py-2 text-sm font-bold text-red-500">${r.deviation_percent}%</td>`;
         tbody.appendChild(tr);
     });
 }
 
 function renderChart(d){
-    const labels = d.anomaly_buckets.map(b=> new Date(b.bucket_start).toLocaleString('tr-TR'));
-    const values = d.anomaly_buckets.map(b=> b.observed_value);
+    const labels = (d.anomaly_buckets || []).map(b=> new Date(b.bucket_start).toLocaleString(window.TMG_LOCALE || 'tr-TR'));
+    const values = (d.anomaly_buckets || []).map(b=> b.observed_value);
     const ctx = document.getElementById('anomaly-chart').getContext('2d');
     if(anomalyChart) anomalyChart.destroy();
     anomalyChart = new Chart(ctx,{
         type:'line',
-        data:{ labels, datasets:[{ label:'Gözlenen', data: values, borderColor:'rgb(239,68,68)', backgroundColor:'rgba(239,68,68,0.1)', tension:0.1, fill:true }]},
+        data:{ labels, datasets:[{ label: window.t('observed_value', 'Observed'), data: values, borderColor:'rgb(239,68,68)', backgroundColor:'rgba(239,68,68,0.1)', tension:0.1, fill:true }]},
         options:{ responsive:true, maintainAspectRatio:false }
     });
 }
