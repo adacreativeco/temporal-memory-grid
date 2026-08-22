@@ -1,5 +1,5 @@
 <?php
-namespace Temporal;
+namespace Temporal {
 
 class I18n {
     public static $SUPPORTED_LANGS = [
@@ -95,7 +95,6 @@ class I18n {
 
     private static function detectBrowserLanguage($header) {
         $languages = [];
-        // Format: tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6
         if (preg_match_all('/([a-z]{1,8}(?:-[a-z]{1,8})?)\s*(?:;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $header, $matches)) {
             foreach ($matches[1] as $index => $langCode) {
                 $q = !empty($matches[2][$index]) ? (float)$matches[2][$index] : 1.0;
@@ -134,22 +133,16 @@ class I18n {
     public static function get($key, $params = []) {
         self::init();
 
-        // 1. Direct translation
         if (isset(self::$translations[$key])) {
             $text = self::$translations[$key];
-        }
-        // 2. English fallback
-        elseif (isset(self::$fallbackTranslations[$key])) {
+        } elseif (isset(self::$fallbackTranslations[$key])) {
             $text = self::$fallbackTranslations[$key];
-        }
-        // 3. Key as string
-        else {
+        } else {
             $text = $key;
         }
 
         if (!empty($params)) {
             if (is_array($params)) {
-                // Check for named placeholders {name}
                 $hasNamed = false;
                 foreach ($params as $k => $v) {
                     if (is_string($k)) {
@@ -184,13 +177,9 @@ class I18n {
 
     public static function getAll() {
         self::init();
-        // Merge fallback and active translations
         return array_merge(self::$fallbackTranslations, self::$translations);
     }
 
-    /**
-     * Generates a URL to switch language while preserving current query parameters
-     */
     public static function getSwitchUrl($targetLang) {
         $params = $_GET;
         $params['lang'] = $targetLang;
@@ -199,12 +188,16 @@ class I18n {
     }
 }
 
-// Global translation helper
-if (!function_exists('__')) {
-    function __($key, ...$params) {
-        return \Temporal\I18n::get($key, $params);
+// Auto-initialize on load
+I18n::init();
+
+} // End namespace Temporal
+
+namespace {
+    // Global translation helper in root namespace
+    if (!function_exists('__')) {
+        function __($key, ...$params) {
+            return \Temporal\I18n::get($key, $params);
+        }
     }
 }
-
-// Auto-initialize on load
-\Temporal\I18n::init();
