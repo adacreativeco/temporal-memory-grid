@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnomaliesResponse",
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean" },
+    "message": { "type": "string" },
+    "data": {
+      "type": "object",
+      "properties": {
+        "metric_type": { "type": "string" },
+        "type": { "type": ["string","null"] },
+        "source_id": { "type": ["string","null"] },
+        "bucket_size": { "type": "string" },
+        "start_time": { "type": "string" },
+        "end_time": { "type": "string" },
+        "deviation_threshold": { "type": "number" },
+        "baseline": { "type": "string", "enum": ["historical","moving_average"] },
+        "ma_window": { "type": "integer" },
+        "anomaly_buckets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bucket_start": { "type": "string" },
+              "observed_value": { "type": "integer" },
+              "expected_value": { "type": "number" },
+              "deviation_percent": { "type": "number" }
+            },
+            "required": ["bucket_start","observed_value","expected_value","deviation_percent"]
+          }
+        }
+      },
+      "required": [
+        "metric_type","bucket_size","start_time","end_time",
+        "deviation_threshold","baseline","ma_window","anomaly_buckets"
+      ]
+    }
+  },
+  "required": ["success","data"]
+}

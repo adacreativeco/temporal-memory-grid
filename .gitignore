@@ -1,0 +1,40 @@
+# Temporal Memory Grid — .gitignore
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Cache directory (keep folder with .gitkeep)
+cache/*
+!cache/.gitkeep
+
+# Environment and custom local config
+.env
+.env.local
+*.local.php
+
+# System and logs
+*.log
+system_logs.txt
+*.tmp
+
+# Operating system artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.trae/
+
+# Temp / Scratch files
+scratch/
+test_*.php
+verify_*.php

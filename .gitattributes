@@ -1,0 +1,16 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Explicitly declare Windows batch files to use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell scripts must use LF
+*.sh text eol=lf
+
+# Binary files
+*.db binary
+*.sqlite binary
+*.png binary
+*.jpg binary
+*.ico binary

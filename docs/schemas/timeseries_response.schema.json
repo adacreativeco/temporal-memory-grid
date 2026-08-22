@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TimeseriesResponse",
+  "type": "object",
+  "properties": {
+    "success": { "type": "boolean" },
+    "message": { "type": "string" },
+    "data": {
+      "type": "object",
+      "properties": {
+        "metric_type": { "type": "string", "enum": ["total_events","events_by_type","events_by_source"] },
+        "type": { "type": ["string","null"] },
+        "source_id": { "type": ["string","null"] },
+        "bucket_size": { "type": "string", "enum": ["1m","5m","15m","1h","1d"] },
+        "start_time": { "type": "string" },
+        "end_time": { "type": "string" },
+        "buckets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bucket_start": { "type": "string" },
+              "count": { "type": "integer" }
+            },
+            "required": ["bucket_start","count"]
+          }
+        }
+      },
+      "required": ["metric_type","bucket_size","start_time","end_time","buckets"]
+    }
+  },
+  "required": ["success","data"]
+}

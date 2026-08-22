@@ -1,0 +1,167 @@
+{
+  "info": {
+    "name": "Temporal Memory Grid",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8000"},
+    {"key": "apiKey", "value": "temporal_grid_api_key_2024"}
+  ],
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/x-www-form-urlencoded"}],
+        "url": {"raw": "{{baseUrl}}/login.php", "host": ["{{baseUrl}}"], "path": ["login.php"]},
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {"key": "username", "value": "admin"},
+            {"key": "password", "value": "temporal123"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Save External API",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/x-www-form-urlencoded"}],
+        "url": {"raw": "{{baseUrl}}/actions/save_external_api.php", "host": ["{{baseUrl}}"], "path": ["actions","save_external_api.php"]},
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {"key": "external_api_url", "value": "https://rteg.adacreative.co/api/v1/public/events.php"},
+            {"key": "external_api_token", "value": ""},
+            {"key": "external_api_header_name", "value": "X-API-Key"},
+            {"key": "external_api_insecure", "value": "1"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Debug External API",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "{{baseUrl}}/actions/debug_external_api.php", "host": ["{{baseUrl}}"], "path": ["actions","debug_external_api.php"]}
+      }
+    },
+    {
+      "name": "Test External API",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/actions/test_external_api.php?limit=3&insecure=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["actions","test_external_api.php"],
+          "query": [{"key": "limit", "value": "3"},{"key": "insecure", "value": "1"}]
+        }
+      }
+    },
+    {
+      "name": "Run Puller (5m)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/actions/run_puller.php?minutes=5",
+          "host": ["{{baseUrl}}"],
+          "path": ["actions","run_puller.php"],
+          "query": [{"key": "minutes", "value": "5"}]
+        }
+      }
+    },
+    {
+      "name": "Ingest Bridge (POST JSON)",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "url": {"raw": "{{baseUrl}}/actions/ingest_bridge.php", "host": ["{{baseUrl}}"], "path": ["actions","ingest_bridge.php"]},
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": [\n    {\n      \"event_id\": \"evt_test_1\",\n      \"source_id\": \"test_source\",\n      \"type\": \"sensor_alert\",\n      \"lat\": 41.0,\n      \"lon\": 29.0,\n      \"timestamp\": 1765240400,\n      \"created_at\": \"2025-12-09 00:33:20\"\n    },\n    {\n      \"event_id\": \"evt_test_2\",\n      \"source_id\": \"test_source\",\n      \"type\": \"delivery_completed\",\n      \"lat\": 41.01,\n      \"lon\": 28.99,\n      \"timestamp\": 1765240460,\n      \"created_at\": \"2025-12-09 00:34:20\"\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Check Buckets",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "{{baseUrl}}/actions/check_buckets.php", "host": ["{{baseUrl}}"], "path": ["actions","check_buckets.php"]}
+      }
+    },
+    {
+      "name": "Timeseries: Total Events (1m)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/timeseries.php?api_key={{apiKey}}&metric_type=total_events&bucket_size=1m&start_time=2025-12-09T00:33:19Z&end_time=2025-12-09T00:34:21Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","timeseries.php"],
+          "query": [
+            {"key": "api_key", "value": "{{apiKey}}"},
+            {"key": "metric_type", "value": "total_events"},
+            {"key": "bucket_size", "value": "1m"},
+            {"key": "start_time", "value": "2025-12-09T00:33:19Z"},
+            {"key": "end_time", "value": "2025-12-09T00:34:21Z"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Timeseries: Events By Type (1m)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/timeseries.php?api_key={{apiKey}}&metric_type=events_by_type&type=delivery_completed&bucket_size=1m&start_time=2025-12-09T00:33:19Z&end_time=2025-12-09T00:34:21Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","timeseries.php"]
+        }
+      }
+    },
+    {
+      "name": "Timeseries: Events By Source (1m)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/timeseries.php?api_key={{apiKey}}&metric_type=events_by_source&source_id=test_source&bucket_size=1m&start_time=2025-12-09T00:33:19Z&end_time=2025-12-09T00:34:21Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","timeseries.php"]
+        }
+      }
+    },
+    {
+      "name": "Trend: Total Events",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/trend.php?api_key={{apiKey}}&metric_type=total_events&primary_start_time=2025-12-09T00:33:00Z&primary_end_time=2025-12-09T00:35:00Z&compare_start_time=2025-12-08T00:33:00Z&compare_end_time=2025-12-08T00:35:00Z",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","trend.php"]
+        }
+      }
+    },
+    {
+      "name": "Anomalies: Total Events",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/anomalies.php?api_key={{apiKey}}&metric_type=total_events&bucket_size=1m&start_time=2025-12-09T00:33:00Z&end_time=2025-12-09T00:35:00Z&baseline=historical&deviation_threshold=50",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","anomalies.php"]
+        }
+      }
+    },
+    {
+      "name": "Timeseries Export (CSV)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/timeseries.php?api_key={{apiKey}}&metric_type=total_events&bucket_size=1m&start_time=2025-12-09T00:33:00Z&end_time=2025-12-09T00:35:00Z&format=csv",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","v1","timeseries.php"]
+        }
+      }
+    }
+  ]
+}

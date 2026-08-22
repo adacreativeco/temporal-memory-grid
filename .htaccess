@@ -1,0 +1,20 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Block direct access to sensitive files
+RewriteRule ^temporal_memory_grid\.db$ - [F]
+RewriteRule ^php\.ini$ - [F]
+RewriteRule ^\.env$ - [F]
+
+# Block direct access to cache directory
+RewriteRule ^cache/ - [F]
+
+# Fallback to index.php for non-existing paths
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+</IfModule>
