@@ -1,5 +1,6 @@
 <?php
 namespace Temporal;
+
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/database_pdo.php';
 
