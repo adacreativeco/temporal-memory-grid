@@ -4,7 +4,10 @@ require_once 'database_pdo.php';
 require_once 'i18n.php';
 
 // Require login
-\Temporal\Auth::getInstance()->requireLogin();
+$auth = \Temporal\Auth::getInstance();
+$auth->requireLogin();
+$isAdmin = $auth->isAdmin();
+$currentUserRole = $auth->getRole();
 
 $current_page = 'settings';
 include 'includes/header.php';
@@ -16,7 +19,77 @@ include 'includes/header.php';
         <p class="text-gray-600"><?php echo __('settings_subtitle'); ?></p>
     </div>
 
+    <?php if (!$isAdmin): ?>
+        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2 font-medium mb-6 shadow-sm">
+            <span class="text-base">ℹ️</span>
+            <span><?php echo __('viewer_restricted_notice'); ?></span>
+        </div>
+    <?php endif; ?>
+
     <div class="space-y-6">
+        <!-- User & Role Management Card (RBAC) -->
+        <?php if ($isAdmin): ?>
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-gray-100 mb-4 gap-2">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <span>👥</span> <?php echo __('users_title'); ?>
+                    </h2>
+                    <p class="text-xs text-gray-500"><?php echo __('users_desc'); ?></p>
+                </div>
+                <button type="button" id="btn-show-create-user" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition">
+                    <?php echo __('create_new_user'); ?>
+                </button>
+            </div>
+
+            <!-- Create User Form (Hidden by default) -->
+            <div id="create-user-box" class="hidden mb-4 p-4 bg-purple-50/60 border border-purple-200 rounded-lg">
+                <h3 class="text-sm font-semibold text-purple-900 mb-3"><?php echo __('create_new_user'); ?></h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('username'); ?></label>
+                        <input id="new-username" type="text" placeholder="e.g. data_analyst_01" class="w-full px-3 py-1.5 border rounded-md">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('password'); ?></label>
+                        <input id="new-user-password" type="password" placeholder="Min 6 characters" class="w-full px-3 py-1.5 border rounded-md">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('user_role'); ?></label>
+                        <select id="new-user-role" class="w-full px-3 py-1.5 border rounded-md bg-white">
+                            <option value="viewer" selected><?php echo __('role_viewer'); ?></option>
+                            <option value="analyst"><?php echo __('role_analyst'); ?></option>
+                            <option value="admin"><?php echo __('role_admin'); ?></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex space-x-2 pt-3">
+                    <button type="button" id="btn-save-user" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium px-4 py-2 rounded-md"><?php echo __('create'); ?></button>
+                    <button type="button" id="btn-cancel-user" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-medium px-3 py-2 rounded-md"><?php echo __('cancel'); ?></button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-xs">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('username'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('user_role'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('user_created'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('user_last_login'); ?></th>
+                            <th class="px-3 py-2 text-right font-medium text-gray-500"><?php echo __('key_table_action'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table" class="bg-white divide-y divide-gray-100">
+                        <tr><td colspan="5" class="px-3 py-3 text-center text-gray-400">Loading user accounts...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="user-result" class="text-xs text-gray-600 mt-2"></div>
+        </div>
+        <?php endif; ?>
+
         <!-- Worker Daemon & Background Automation -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-2">
@@ -29,9 +102,11 @@ include 'includes/header.php';
                         <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>
                         Loading...
                     </span>
+                    <?php if ($isAdmin): ?>
                     <button type="button" id="btn-run-worker-once" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition">
                         ⚡ <?php echo __('run_once_btn'); ?>
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -64,12 +139,15 @@ include 'includes/header.php';
                     <h2 class="text-lg font-semibold text-gray-900"><?php echo __('api_keys_title'); ?></h2>
                     <p class="text-xs text-gray-500"><?php echo __('api_keys_desc'); ?></p>
                 </div>
+                <?php if ($isAdmin): ?>
                 <button type="button" id="btn-show-create-key" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm">
                     <?php echo __('create_new_key'); ?>
                 </button>
+                <?php endif; ?>
             </div>
 
             <!-- Create Key Form (Hidden by default) -->
+            <?php if ($isAdmin): ?>
             <div id="create-key-box" class="hidden mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h3 class="text-sm font-semibold text-blue-900 mb-2"><?php echo __('create_new_key'); ?></h3>
                 <div class="space-y-2">
@@ -93,6 +171,7 @@ include 'includes/header.php';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <!-- Keys Table -->
             <div class="overflow-x-auto">
@@ -122,12 +201,15 @@ include 'includes/header.php';
                     </h2>
                     <p class="text-xs text-gray-500"><?php echo __('alerting_desc'); ?></p>
                 </div>
+                <?php if ($isAdmin): ?>
                 <button type="button" id="btn-show-create-alert" class="bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition">
                     <?php echo __('create_new_alert'); ?>
                 </button>
+                <?php endif; ?>
             </div>
 
             <!-- Create Alert Form (Hidden by default) -->
+            <?php if ($isAdmin): ?>
             <div id="create-alert-box" class="hidden mb-4 p-4 bg-red-50/60 border border-red-200 rounded-lg">
                 <h3 class="text-sm font-semibold text-red-900 mb-3"><?php echo __('create_new_alert'); ?></h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -177,6 +259,7 @@ include 'includes/header.php';
                     <button type="button" id="btn-cancel-alert" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-medium px-3 py-2 rounded-md"><?php echo __('cancel'); ?></button>
                 </div>
             </div>
+            <?php endif; ?>
 
             <!-- Alert Rules Table -->
             <div class="overflow-x-auto">
@@ -233,16 +316,18 @@ include 'includes/header.php';
             <form id="retention-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700"><?php echo __('raw_event_retention'); ?></label>
-                    <input id="raw-days" type="number" value="60" class="mt-1 w-full px-3 py-2 border rounded-md">
+                    <input id="raw-days" type="number" value="60" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mt-1 w-full px-3 py-2 border rounded-md <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700"><?php echo __('agg_retention'); ?></label>
-                    <input id="agg-days" type="number" value="365" class="mt-1 w-full px-3 py-2 border rounded-md">
+                    <input id="agg-days" type="number" value="365" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mt-1 w-full px-3 py-2 border rounded-md <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>">
                 </div>
+                <?php if ($isAdmin): ?>
                 <div class="flex space-x-2">
                     <button type="button" id="save-retention" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('save'); ?></button>
                     <button type="button" id="run-cleanup" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('run_cleanup'); ?></button>
                 </div>
+                <?php endif; ?>
             </form>
             <div id="retention-result" class="text-sm text-gray-600 mt-3"></div>
         </div>
@@ -252,7 +337,9 @@ include 'includes/header.php';
             <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('cache_title'); ?></h2>
             <div class="space-y-3">
                 <p class="text-sm text-gray-600"><?php echo __('cache_desc'); ?></p>
+                <?php if ($isAdmin): ?>
                 <button id="clear-cache" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('clear_cache'); ?></button>
+                <?php endif; ?>
                 <div id="cache-result" class="text-sm text-gray-600"></div>
             </div>
         </div>
@@ -263,28 +350,30 @@ include 'includes/header.php';
             <form id="external-api-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">API URL</label>
-                    <input id="external-api-url" type="text" class="mt-1 w-full px-3 py-2 border rounded-md" placeholder="http://localhost:8081/api/v1/public/events.php">
+                    <input id="external-api-url" type="text" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mt-1 w-full px-3 py-2 border rounded-md <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>" placeholder="http://localhost:8081/api/v1/public/events.php">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700"><?php echo __('header_name'); ?></label>
-                        <input id="external-api-header" type="text" class="mt-1 w-full px-3 py-2 border rounded-md" value="X-API-Key">
+                        <input id="external-api-header" type="text" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mt-1 w-full px-3 py-2 border rounded-md <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>" value="X-API-Key">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700"><?php echo __('token_optional'); ?></label>
-                        <input id="external-api-token" type="text" class="mt-1 w-full px-3 py-2 border rounded-md" placeholder="test_key">
+                        <input id="external-api-token" type="text" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mt-1 w-full px-3 py-2 border rounded-md <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>" placeholder="test_key">
                     </div>
                 </div>
                 <div>
                     <label class="inline-flex items-center">
-                        <input id="external-api-insecure" type="checkbox" class="mr-2">
+                        <input id="external-api-insecure" type="checkbox" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="mr-2">
                         <span class="text-sm text-gray-700"><?php echo __('insecure_ssl'); ?></span>
                     </label>
                 </div>
+                <?php if ($isAdmin): ?>
                 <div class="space-x-2 pt-1">
                     <button type="button" id="save-external-api" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('save'); ?></button>
                     <button type="button" id="test-external-api" class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('test_connection'); ?></button>
                 </div>
+                <?php endif; ?>
             </form>
             <div id="external-api-result" class="text-sm text-gray-600 mt-3"></div>
         </div>
@@ -293,16 +382,20 @@ include 'includes/header.php';
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
             <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('manual_json_title'); ?></h2>
             <p class="text-sm text-gray-600 mb-2"><?php echo __('manual_json_desc'); ?></p>
-            <textarea id="manual-json" class="w-full h-32 px-3 py-2 border rounded-md font-mono text-xs" placeholder='[{"type":"vehicle_movement","source":"sensor_01","timestamp":1733872741}]'></textarea>
+            <textarea id="manual-json" <?php echo !$isAdmin ? 'disabled' : ''; ?> class="w-full h-32 px-3 py-2 border rounded-md font-mono text-xs <?php echo !$isAdmin ? 'bg-gray-100 cursor-not-allowed' : ''; ?>" placeholder='[{"type":"vehicle_movement","source":"sensor_01","timestamp":1733872741}]'></textarea>
+            <?php if ($isAdmin): ?>
             <div class="mt-3">
                 <button type="button" id="import-manual-json" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-4 py-2 rounded-md"><?php echo __('import_and_aggregate'); ?></button>
             </div>
+            <?php endif; ?>
             <div id="manual-import-result" class="text-sm text-gray-600 mt-3"></div>
         </div>
     </div>
 </div>
 
 <script>
+const IS_ADMIN = <?php echo $isAdmin ? 'true' : 'false'; ?>;
+
 document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
     loadExternalApi();
@@ -310,35 +403,179 @@ document.addEventListener('DOMContentLoaded', () => {
     loadApiKeys();
     loadAlertRules();
 
+    if (IS_ADMIN) {
+        loadUsers();
+    }
+
     setInterval(loadWorkerStatus, 8000);
 
-    document.getElementById('save-retention').addEventListener('click', saveSettings);
-    document.getElementById('run-cleanup').addEventListener('click', runCleanup);
-    document.getElementById('clear-cache').addEventListener('click', clearCache);
-    document.getElementById('save-external-api').addEventListener('click', saveExternalApi);
-    document.getElementById('test-external-api').addEventListener('click', testExternalApi);
-    document.getElementById('import-manual-json').addEventListener('click', importManualJson);
-    document.getElementById('btn-run-worker-once').addEventListener('click', runWorkerOnce);
+    const saveRetentionBtn = document.getElementById('save-retention');
+    if (saveRetentionBtn) saveRetentionBtn.addEventListener('click', saveSettings);
+
+    const runCleanupBtn = document.getElementById('run-cleanup');
+    if (runCleanupBtn) runCleanupBtn.addEventListener('click', runCleanup);
+
+    const clearCacheBtn = document.getElementById('clear-cache');
+    if (clearCacheBtn) clearCacheBtn.addEventListener('click', clearCache);
+
+    const saveExtApiBtn = document.getElementById('save-external-api');
+    if (saveExtApiBtn) saveExtApiBtn.addEventListener('click', saveExternalApi);
+
+    const testExtApiBtn = document.getElementById('test-external-api');
+    if (testExtApiBtn) testExtApiBtn.addEventListener('click', testExternalApi);
+
+    const importJsonBtn = document.getElementById('import-manual-json');
+    if (importJsonBtn) importJsonBtn.addEventListener('click', importManualJson);
+
+    const runWorkerBtn = document.getElementById('btn-run-worker-once');
+    if (runWorkerBtn) runWorkerBtn.addEventListener('click', runWorkerOnce);
+
     document.getElementById('btn-change-password').addEventListener('click', changePassword);
 
     // API Keys UI
-    document.getElementById('btn-show-create-key').addEventListener('click', () => {
-        document.getElementById('create-key-box').classList.toggle('hidden');
-    });
-    document.getElementById('btn-cancel-key').addEventListener('click', () => {
-        document.getElementById('create-key-box').classList.add('hidden');
-    });
-    document.getElementById('btn-save-key').addEventListener('click', createApiKey);
+    const showKeyBtn = document.getElementById('btn-show-create-key');
+    if (showKeyBtn) {
+        showKeyBtn.addEventListener('click', () => {
+            document.getElementById('create-key-box').classList.toggle('hidden');
+        });
+        document.getElementById('btn-cancel-key').addEventListener('click', () => {
+            document.getElementById('create-key-box').classList.add('hidden');
+        });
+        document.getElementById('btn-save-key').addEventListener('click', createApiKey);
+    }
 
     // Alerts UI
-    document.getElementById('btn-show-create-alert').addEventListener('click', () => {
-        document.getElementById('create-alert-box').classList.toggle('hidden');
-    });
-    document.getElementById('btn-cancel-alert').addEventListener('click', () => {
-        document.getElementById('create-alert-box').classList.add('hidden');
-    });
-    document.getElementById('btn-save-alert').addEventListener('click', createAlertRule);
+    const showAlertBtn = document.getElementById('btn-show-create-alert');
+    if (showAlertBtn) {
+        showAlertBtn.addEventListener('click', () => {
+            document.getElementById('create-alert-box').classList.toggle('hidden');
+        });
+        document.getElementById('btn-cancel-alert').addEventListener('click', () => {
+            document.getElementById('create-alert-box').classList.add('hidden');
+        });
+        document.getElementById('btn-save-alert').addEventListener('click', createAlertRule);
+    }
+
+    // Users UI (RBAC)
+    const showUserBtn = document.getElementById('btn-show-create-user');
+    if (showUserBtn) {
+        showUserBtn.addEventListener('click', () => {
+            document.getElementById('create-user-box').classList.toggle('hidden');
+        });
+        document.getElementById('btn-cancel-user').addEventListener('click', () => {
+            document.getElementById('create-user-box').classList.add('hidden');
+        });
+        document.getElementById('btn-save-user').addEventListener('click', createUser);
+    }
 });
+
+/* Users & RBAC Management */
+async function loadUsers() {
+    const tbody = document.getElementById('users-table');
+    if (!tbody) return;
+
+    try {
+        const res = await fetch('/actions/users.php?action=list');
+        const json = await res.json();
+        if (!json.success || !json.data || json.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-3 py-3 text-center text-gray-400">No users found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = json.data.map(u => {
+            const roleBadge = u.role === 'admin' 
+                ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Admin</span>'
+                : (u.role === 'analyst' 
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Analyst</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Viewer</span>');
+
+            const lastLogin = u.last_login_at ? new Date(u.last_login_at).toLocaleString() : 'Never';
+            const created = u.created_at ? new Date(u.created_at).toLocaleDateString() : '-';
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-3 py-2.5 font-bold text-gray-900 flex items-center gap-1.5">
+                        <span>👤</span>
+                        <span>${escapeHtml(u.username)}</span>
+                    </td>
+                    <td class="px-3 py-2.5">
+                        <select onchange="updateUserRole(${u.id}, this.value)" class="text-xs px-2 py-1 border rounded bg-white font-medium">
+                            <option value="viewer" ${u.role === 'viewer' ? 'selected' : ''}>Viewer</option>
+                            <option value="analyst" ${u.role === 'analyst' ? 'selected' : ''}>Analyst</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td class="px-3 py-2.5 text-gray-500 font-mono text-[11px]">${created}</td>
+                    <td class="px-3 py-2.5 text-gray-500 font-mono text-[11px]">${lastLogin}</td>
+                    <td class="px-3 py-2.5 text-right">
+                        <button onclick="deleteUserAccount(${u.id})" class="text-red-600 hover:text-red-800 font-semibold text-[11px] bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-3 py-3 text-center text-red-500">Error loading users</td></tr>';
+    }
+}
+
+async function createUser() {
+    const username = document.getElementById('new-username').value.trim();
+    const password = document.getElementById('new-user-password').value;
+    const role = document.getElementById('new-user-role').value;
+
+    if (!username || !password) {
+        alert('Please fill in username and password.');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('action', 'create');
+    fd.append('username', username);
+    fd.append('password', password);
+    fd.append('role', role);
+
+    const res = await fetch('/actions/users.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (json.success) {
+        document.getElementById('create-user-box').classList.add('hidden');
+        document.getElementById('new-username').value = '';
+        document.getElementById('new-user-password').value = '';
+        loadUsers();
+    } else {
+        alert('Error: ' + (json.error || 'Failed to create user'));
+    }
+}
+
+async function updateUserRole(id, role) {
+    const fd = new FormData();
+    fd.append('action', 'update_role');
+    fd.append('id', id);
+    fd.append('role', role);
+
+    const res = await fetch('/actions/users.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (!json.success) {
+        alert('Error: ' + (json.error || 'Failed to update role'));
+        loadUsers();
+    }
+}
+
+async function deleteUserAccount(id) {
+    if (!confirm('Are you sure you want to delete this user account?')) return;
+    const fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('id', id);
+
+    const res = await fetch('/actions/users.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (json.success) {
+        loadUsers();
+    } else {
+        alert('Error: ' + (json.error || 'Failed to delete user'));
+    }
+}
 
 /* Alert Rules Management */
 async function loadAlertRules() {
@@ -360,6 +597,18 @@ async function loadAlertRules() {
             const thresholdLabel = rule.rule_type === 'volume_threshold' ? `${rule.threshold_value} / ${rule.bucket_size}` : `+${rule.threshold_value}% deviation`;
             const lastTrigger = rule.last_triggered_at ? new Date(rule.last_triggered_at).toLocaleString() : 'Never';
 
+            const actionBtns = IS_ADMIN ? `
+                <button onclick="testAlertRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-[11px] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    🔔 Test
+                </button>
+                <button onclick="toggleAlertRule(${rule.id}, ${rule.is_active == 1 ? 0 : 1})" class="text-amber-600 hover:text-amber-800 font-semibold text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                    ${rule.is_active == 1 ? 'Disable' : 'Enable'}
+                </button>
+                <button onclick="deleteAlertRule(${rule.id})" class="text-red-600 hover:text-red-800 font-semibold text-[11px] bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                    Delete
+                </button>
+            ` : `<button onclick="testAlertRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-[11px] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">🔔 Test</button>`;
+
             return `
                 <tr class="hover:bg-gray-50">
                     <td class="px-3 py-2.5 font-semibold text-gray-900">${escapeHtml(rule.name)}</td>
@@ -368,15 +617,7 @@ async function loadAlertRules() {
                     <td class="px-3 py-2.5 text-gray-500 font-mono text-[11px]">${lastTrigger}</td>
                     <td class="px-3 py-2.5">${statusBadge}</td>
                     <td class="px-3 py-2.5 text-right space-x-1.5">
-                        <button onclick="testAlertRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-[11px] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                            🔔 Test
-                        </button>
-                        <button onclick="toggleAlertRule(${rule.id}, ${rule.is_active == 1 ? 0 : 1})" class="text-amber-600 hover:text-amber-800 font-semibold text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                            ${rule.is_active == 1 ? 'Disable' : 'Enable'}
-                        </button>
-                        <button onclick="deleteAlertRule(${rule.id})" class="text-red-600 hover:text-red-800 font-semibold text-[11px] bg-red-50 px-2 py-0.5 rounded border border-red-200">
-                            Delete
-                        </button>
+                        ${actionBtns}
                     </td>
                 </tr>
             `;
@@ -517,6 +758,15 @@ async function loadApiKeys() {
                 ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">Active</span>'
                 : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">Revoked</span>';
 
+            const actionBtns = IS_ADMIN ? `
+                <button onclick="toggleApiKey(${k.id}, ${k.is_active == 1 ? 0 : 1})" class="text-xs text-amber-600 hover:underline">
+                    ${k.is_active == 1 ? 'Revoke' : 'Activate'}
+                </button>
+                <button onclick="deleteApiKey(${k.id})" class="text-xs text-red-600 hover:underline ml-2">
+                    Delete
+                </button>
+            ` : `<span class="text-gray-400 text-xs">Read-Only</span>`;
+
             return `
                 <tr class="hover:bg-gray-50">
                     <td class="px-3 py-2 font-medium text-gray-900">${escapeHtml(k.name)}</td>
@@ -526,12 +776,7 @@ async function loadApiKeys() {
                     </td>
                     <td class="px-3 py-2">${statusBadge}</td>
                     <td class="px-3 py-2 text-right space-x-1">
-                        <button onclick="toggleApiKey(${k.id}, ${k.is_active == 1 ? 0 : 1})" class="text-xs text-amber-600 hover:underline">
-                            ${k.is_active == 1 ? 'Revoke' : 'Activate'}
-                        </button>
-                        <button onclick="deleteApiKey(${k.id})" class="text-xs text-red-600 hover:underline ml-2">
-                            Delete
-                        </button>
+                        ${actionBtns}
                     </td>
                 </tr>
             `;

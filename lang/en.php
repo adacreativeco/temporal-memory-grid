@@ -155,6 +155,18 @@ return [
     'manual_json_desc' => 'Paste raw event JSON arrays to instantly ingest and aggregate.',
     'import_and_aggregate' => 'Import & Aggregate',
 
+    // Users & Roles (RBAC)
+    'users_title' => 'User & Role Management (RBAC)',
+    'users_desc' => 'Manage Admin and read-only Viewer user accounts and permissions.',
+    'create_new_user' => '+ Create New User',
+    'user_role' => 'User Role',
+    'role_admin' => 'Admin (Full Access)',
+    'role_viewer' => 'Viewer (Read-Only)',
+    'role_analyst' => 'Analyst (Analysis & Export)',
+    'user_created' => 'Registered Date',
+    'user_last_login' => 'Last Login',
+    'viewer_restricted_notice' => 'These settings can only be altered by users with Admin role. You are in read-only mode.',
+
     // Alerting & Webhooks
     'alerting_title' => 'Automated Alerts & Webhook Notifications',
     'alerting_desc' => 'Dispatch instant JSON webhook payloads to Discord, Slack, or external services when volume thresholds are crossed or anomalies detected.',

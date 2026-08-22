@@ -155,6 +155,18 @@ return [
     'manual_json_desc' => 'Harici API yanıtını veya ham olay JSON dizisini yapıştırıp içe aktarın.',
     'import_and_aggregate' => 'İçe Aktar & Kovalara İşle',
 
+    // Users & Roles (RBAC)
+    'users_title' => 'Kullanıcı & Rol Yönetimi (RBAC)',
+    'users_desc' => 'Yönetici (Admin) ve salt-okunur İzleyici (Viewer) kullanıcı hesaplarını ve yetkilerini yönetin.',
+    'create_new_user' => '+ Yeni Kullanıcı Ekle',
+    'user_role' => 'Kullanıcı Rolü',
+    'role_admin' => 'Admin (Tam Yetki)',
+    'role_viewer' => 'Viewer (Salt Okunur)',
+    'role_analyst' => 'Analyst (Analiz & Export)',
+    'user_created' => 'Kayıt Tarihi',
+    'user_last_login' => 'Son Giriş',
+    'viewer_restricted_notice' => 'Bu ayarlar yalnızca Admin rolüne sahip kullanıcılar tarafından değiştirilebilir. Salt-okunur moddasınız.',
+
     // Alerting & Webhooks
     'alerting_title' => 'Otomatik Alarmlar & Webhook Bildirimleri',
     'alerting_desc' => 'Hacim eşiği aşıldığında veya anomali tespit edildiğinde Discord, Slack veya harici Webhook servisine anında JSON bildirim fırlatın.',

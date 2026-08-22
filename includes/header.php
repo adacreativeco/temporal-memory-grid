@@ -102,10 +102,20 @@ $currentLangInfo = $supportedLanguages[$lang] ?? $supportedLanguages['tr'];
                         </div>
                     </div>
 
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <div class="flex items-center space-x-3 pl-2 border-l border-gray-200">
-                            <span class="text-gray-600 text-xs font-medium hidden md:inline"><?php echo __('welcome_user', htmlspecialchars($_SESSION['username'])); ?></span>
-                            <a href="/logout.php" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-md text-xs font-medium transition duration-200">
+                    <?php if (isset($_SESSION['user_id'])): 
+                        $userRole = $_SESSION['role'] ?? 'viewer';
+                        $roleBadgeColor = $userRole === 'admin' 
+                            ? 'bg-purple-100 text-purple-800 border-purple-200' 
+                            : ($userRole === 'analyst' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-blue-100 text-blue-800 border-blue-200');
+                    ?>
+                        <div class="flex items-center space-x-2 pl-2 border-l border-gray-200">
+                            <div class="flex items-center gap-1.5 text-xs font-medium text-gray-700">
+                                <span>👤 <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase border <?php echo $roleBadgeColor; ?>">
+                                    <?php echo htmlspecialchars($userRole); ?>
+                                </span>
+                            </div>
+                            <a href="/logout.php" class="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-3 py-1.5 rounded-md text-xs font-semibold transition duration-200">
                                 <?php echo __('logout'); ?>
                             </a>
                         </div>

@@ -97,6 +97,31 @@ class Auth {
             exit();
         }
     }
+
+    public function getRole() {
+        return $_SESSION['role'] ?? 'viewer';
+    }
+
+    public function isAdmin() {
+        return $this->isLoggedIn() && ($this->getRole() === 'admin');
+    }
+
+    public function isViewer() {
+        return $this->isLoggedIn() && ($this->getRole() === 'viewer');
+    }
+
+    public function requireAdmin() {
+        $this->requireLogin();
+        if (!$this->isAdmin()) {
+            http_response_code(403);
+            if (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
+                echo json_encode(['success' => false, 'error' => 'Forbidden: Admin privileges required.']);
+            } else {
+                header('Location: /index.php?error=unauthorized_admin');
+            }
+            exit();
+        }
+    }
     
     public function validateApiKey($api_key) {
         if (empty($api_key)) {
@@ -128,7 +153,7 @@ class Auth {
             return [
                 'id' => $_SESSION['user_id'],
                 'username' => $_SESSION['username'],
-                'role' => $_SESSION['role'] ?? 'admin'
+                'role' => $this->getRole()
             ];
         }
         return null;
@@ -152,6 +177,62 @@ class Auth {
 
         $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
         $db->execute("UPDATE users SET password_hash = ? WHERE id = ?", [$newHash, $userId]);
+        return true;
+    }
+
+    public function getUsers() {
+        $this->requireAdmin();
+        $db = Database::getInstance();
+        return $db->query("SELECT id, username, role, created_at, last_login_at FROM users ORDER BY id ASC");
+    }
+
+    public function createUser($username, $password, $role = 'viewer') {
+        $this->requireAdmin();
+        $username = trim($username);
+        if (empty($username) || empty($password)) {
+            throw new \Exception('Kullanıcı adı ve şifre boş bırakılamaz.');
+        }
+        if (strlen($password) < 6) {
+            throw new \Exception('Şifre en az 6 karakter olmalıdır.');
+        }
+        $role = in_array($role, ['admin', 'viewer', 'analyst']) ? $role : 'viewer';
+
+        $db = Database::getInstance();
+        $existing = $db->query("SELECT id FROM users WHERE username = ?", [$username]);
+        if (!empty($existing)) {
+            throw new \Exception("Bu kullanıcı adı ({$username}) zaten mevcut.");
+        }
+
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $db->execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", [$username, $hash, $role]);
+
+        return [
+            'id' => $db->lastInsertId(),
+            'username' => $username,
+            'role' => $role
+        ];
+    }
+
+    public function updateUserRole($userId, $role) {
+        $this->requireAdmin();
+        $userId = (int)$userId;
+        if ($userId === (int)($_SESSION['user_id'] ?? 0)) {
+            throw new \Exception('Kendi yönetici rolünüzü değiştiremezsiniz.');
+        }
+        $role = in_array($role, ['admin', 'viewer', 'analyst']) ? $role : 'viewer';
+        $db = Database::getInstance();
+        $db->execute("UPDATE users SET role = ? WHERE id = ?", [$role, $userId]);
+        return true;
+    }
+
+    public function deleteUser($userId) {
+        $this->requireAdmin();
+        $userId = (int)$userId;
+        if ($userId === (int)($_SESSION['user_id'] ?? 0)) {
+            throw new \Exception('Kendi oturum açtığınız hesabı silemezsiniz.');
+        }
+        $db = Database::getInstance();
+        $db->execute("DELETE FROM users WHERE id = ?", [$userId]);
         return true;
     }
 

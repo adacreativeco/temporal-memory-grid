@@ -155,6 +155,18 @@ return [
     'manual_json_desc' => 'Collez des tableaux JSON d\'événements bruts pour les ingérer et les agréger.',
     'import_and_aggregate' => 'Importer et Agréger',
 
+    // Users & Roles (RBAC)
+    'users_title' => 'Gestion des Utilisateurs et Rôles (RBAC)',
+    'users_desc' => 'Gérez les comptes d\'utilisateurs Administrateur (Admin) et Observateur en lecture seule (Viewer).',
+    'create_new_user' => '+ Créer un Nouvel Utilisateur',
+    'user_role' => 'Rôle de l\'Utilisateur',
+    'role_admin' => 'Admin (Accès Total)',
+    'role_viewer' => 'Viewer (Lecture Seule)',
+    'role_analyst' => 'Analyst (Analyse & Export)',
+    'user_created' => 'Date d\'Inscription',
+    'user_last_login' => 'Dernière Connexion',
+    'viewer_restricted_notice' => 'Ces paramètres ne peuvent être modifiés que par les Administrateurs. Vous êtes en mode lecture seule.',
+
     // Alerting & Webhooks
     'alerting_title' => 'Alertes Automatiques et Notifications Webhook',
     'alerting_desc' => 'Envoyez des alertes instantanées vers Discord, Slack ou des Webhooks personnalisés lorsque des seuils de volume sont franchis ou des anomalies détectées.',

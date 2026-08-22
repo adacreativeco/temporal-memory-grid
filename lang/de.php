@@ -155,6 +155,18 @@ return [
     'manual_json_desc' => 'Fügen Sie Rohereignis-JSON-Arrays ein, um sie sofort zu verarbeiten.',
     'import_and_aggregate' => 'Importieren & Aggregieren',
 
+    // Users & Roles (RBAC)
+    'users_title' => 'Benutzer- & Rollenverwaltung (RBAC)',
+    'users_desc' => 'Verwalten Sie Administrator- (Admin) und schreibgeschützte Betrachter-Konten (Viewer).',
+    'create_new_user' => '+ Neuen Benutzer anlegen',
+    'user_role' => 'Benutzerrolle',
+    'role_admin' => 'Admin (Vollzugriff)',
+    'role_viewer' => 'Viewer (Nur Lesen)',
+    'role_analyst' => 'Analyst (Analyse & Export)',
+    'user_created' => 'Registrierungsdatum',
+    'user_last_login' => 'Letzter Login',
+    'viewer_restricted_notice' => 'Diese Einstellungen können nur von Administratoren geändert werden. Sie befinden sich im schreibgeschützten Modus.',
+
     // Alerting & Webhooks
     'alerting_title' => 'Automatische Alarme & Webhook-Benachrichtigungen',
     'alerting_desc' => 'Senden Sie sofortige Webhooks an Discord, Slack oder benutzerdefinierte URLs, wenn Schwellenwerte überschritten werden.',

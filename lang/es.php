@@ -155,6 +155,18 @@ return [
     'manual_json_desc' => 'Pegue matrices JSON de eventos crudos para ingerir y procesar al instante.',
     'import_and_aggregate' => 'Importar y Procesar',
 
+    // Users & Roles (RBAC)
+    'users_title' => 'Gestión de Usuarios y Roles (RBAC)',
+    'users_desc' => 'Administre cuentas y permisos de usuarios Administradores (Admin) y Visualizadores de solo lectura (Viewer).',
+    'create_new_user' => '+ Crear Nuevo Usuario',
+    'user_role' => 'Rol del Usuario',
+    'role_admin' => 'Admin (Acceso Total)',
+    'role_viewer' => 'Viewer (Solo Lectura)',
+    'role_analyst' => 'Analyst (Análisis y Exportación)',
+    'user_created' => 'Fecha de Registro',
+    'user_last_login' => 'Último Inicio',
+    'viewer_restricted_notice' => 'Esta configuración solo puede ser modificada por Administradores. Se encuentra en modo de solo lectura.',
+
     // Alerting & Webhooks
     'alerting_title' => 'Alarmas Automáticas y Notificaciones Webhook',
     'alerting_desc' => 'Envíe alertas JSON instantáneas a Discord, Slack o servicios externos cuando se superen umbrales de volumen o se detecten anomalías.',

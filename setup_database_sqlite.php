@@ -184,12 +184,24 @@ $db = \Temporal\Database::getInstance();
         try { $db->execute("ALTER TABLE settings ADD COLUMN worker_is_running INTEGER DEFAULT 0"); } catch (Exception $e) {}
         try { $db->execute("ALTER TABLE settings ADD COLUMN worker_last_status TEXT"); } catch (Exception $e) {}
 
-        // Seed default admin user if none exists
+        // Seed default admin and viewer users if none exists
         $userCount = $db->query("SELECT COUNT(*) as count FROM users");
         if (($userCount[0]['count'] ?? 0) == 0) {
             $adminHash = password_hash('temporal123', PASSWORD_BCRYPT);
+            $viewerHash = password_hash('viewer123', PASSWORD_BCRYPT);
+            $analystHash = password_hash('analyst123', PASSWORD_BCRYPT);
             $db->execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", ['admin', $adminHash, 'admin']);
-            echo "Default admin user seeded (admin / temporal123)\n";
+            $db->execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", ['viewer', $viewerHash, 'viewer']);
+            $db->execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", ['analyst', $analystHash, 'analyst']);
+            echo "Default users seeded (admin / temporal123, viewer / viewer123, analyst / analyst123)\n";
+        } else {
+            // Ensure viewer user exists
+            $viewerCheck = $db->query("SELECT id FROM users WHERE username = 'viewer'");
+            if (empty($viewerCheck)) {
+                $viewerHash = password_hash('viewer123', PASSWORD_BCRYPT);
+                $db->execute("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)", ['viewer', $viewerHash, 'viewer']);
+                echo "Viewer user seeded (viewer / viewer123)\n";
+            }
         }
 
         // Seed default API keys if none exist
