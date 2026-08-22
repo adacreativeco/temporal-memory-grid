@@ -155,6 +155,22 @@ return [
     'manual_json_desc' => 'Collez des tableaux JSON d\'événements bruts pour les ingérer et les agréger.',
     'import_and_aggregate' => 'Importer et Agréger',
 
+    // Alerting & Webhooks
+    'alerting_title' => 'Alertes Automatiques et Notifications Webhook',
+    'alerting_desc' => 'Envoyez des alertes instantanées vers Discord, Slack ou des Webhooks personnalisés lorsque des seuils de volume sont franchis ou des anomalies détectées.',
+    'create_new_alert' => '+ Nouvelle Règle d\'Alerte',
+    'rule_name' => 'Nom de la Règle / Description',
+    'rule_type' => 'Type de Déclencheur',
+    'volume_threshold' => 'Seuil de Volume (Événements / Intervalle)',
+    'anomaly_spike' => 'Pic d\'Écart d\'Anomalie (%)',
+    'threshold' => 'Valeur Seuil',
+    'cooldown_minutes' => 'Délai d\'Attente (min)',
+    'webhook_url' => 'URL du Webhook',
+    'webhook_format' => 'Format de la Charge Utile',
+    'test_webhook' => '🔔 Tester le Webhook',
+    'last_triggered' => 'Dernier Déclenchement',
+    'never' => 'Jamais Déclenché',
+
     // API Console
     'api_console_title' => 'Console de Test d\'API Interactive (Try-It-Out)',
     'api_console_subtitle' => 'Testez des points de terminaison d\'API en direct, générez des commandes cURL et mesurez la latence directement depuis votre navigateur.',

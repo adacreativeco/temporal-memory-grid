@@ -155,6 +155,22 @@ return [
     'manual_json_desc' => 'Harici API yanıtını veya ham olay JSON dizisini yapıştırıp içe aktarın.',
     'import_and_aggregate' => 'İçe Aktar & Kovalara İşle',
 
+    // Alerting & Webhooks
+    'alerting_title' => 'Otomatik Alarmlar & Webhook Bildirimleri',
+    'alerting_desc' => 'Hacim eşiği aşıldığında veya anomali tespit edildiğinde Discord, Slack veya harici Webhook servisine anında JSON bildirim fırlatın.',
+    'create_new_alert' => '+ Yeni Alarm Kuralı Ekle',
+    'rule_name' => 'Kural Adı / Açıklama',
+    'rule_type' => 'Alarm Kural Türü',
+    'volume_threshold' => 'Hacim Eşiği (Olay / Kova)',
+    'anomaly_spike' => 'Anomali Sapma Sıçraması (%)',
+    'threshold' => 'Eşik Değeri',
+    'cooldown_minutes' => 'Tekrar Bildirim Aralığı (Cooldown - dk)',
+    'webhook_url' => 'Webhook URL Adresi',
+    'webhook_format' => 'Webhook Payload Formatı',
+    'test_webhook' => '🔔 Test Gönder',
+    'last_triggered' => 'Son Tetiklenme',
+    'never' => 'Hiç Tetiklenmedi',
+
     // API Console
     'api_console_title' => 'İnteraktif API Test Konsolu (Try-It-Out)',
     'api_console_subtitle' => 'Tarayıcı içinden canlı parametreler ile API uç noktalarını anında test edin, cURL kodunu alın ve yanıt sürelerini ölçün.',

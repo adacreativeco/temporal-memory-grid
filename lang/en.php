@@ -155,6 +155,22 @@ return [
     'manual_json_desc' => 'Paste raw event JSON arrays to instantly ingest and aggregate.',
     'import_and_aggregate' => 'Import & Aggregate',
 
+    // Alerting & Webhooks
+    'alerting_title' => 'Automated Alerts & Webhook Notifications',
+    'alerting_desc' => 'Dispatch instant JSON webhook payloads to Discord, Slack, or external services when volume thresholds are crossed or anomalies detected.',
+    'create_new_alert' => '+ Create New Alert Rule',
+    'rule_name' => 'Rule Name / Description',
+    'rule_type' => 'Rule Trigger Type',
+    'volume_threshold' => 'Volume Threshold (Events / Bucket)',
+    'anomaly_spike' => 'Anomaly Deviation Spike (%)',
+    'threshold' => 'Threshold Value',
+    'cooldown_minutes' => 'Notification Cooldown (min)',
+    'webhook_url' => 'Webhook Endpoint URL',
+    'webhook_format' => 'Payload Format',
+    'test_webhook' => '🔔 Test Webhook',
+    'last_triggered' => 'Last Triggered',
+    'never' => 'Never Triggered',
+
     // API Console
     'api_console_title' => 'Interactive API Test Console (Try-It-Out)',
     'api_console_subtitle' => 'Test live API endpoints, generate cURL commands, and measure query latency directly from your browser.',

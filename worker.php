@@ -143,7 +143,18 @@ class Worker {
             Cache::getInstance()->clear();
         }
 
-        $this->updateHeartbeat("Active | Last events: {$pulledCount} | Buckets: {$bucketsCount}");
+        // 6. Evaluate Alert Rules & Dispatch Webhooks
+        try {
+            require_once __DIR__ . '/alert_engine.php';
+            $alertRes = AlertEngine::getInstance()->evaluateRules();
+            if (($alertRes['triggered_alerts'] ?? 0) > 0) {
+                echo "[" . date('Y-m-d H:i:s') . "] 🚨 Alerts: {$alertRes['triggered_alerts']} webhook(s) dispatched!\n";
+            }
+        } catch (\Exception $e) {
+            echo "[" . date('Y-m-d H:i:s') . "] ⚠️ Alert evaluation error: " . $e->getMessage() . "\n";
+        }
+
+        $this->updateHeartbeat("Active | Ingested: {$pulledCount} | Buckets: {$bucketsCount}");
     }
 
     private function generateSimulatedEvent() {

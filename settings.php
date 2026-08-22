@@ -1,9 +1,11 @@
 <?php
 require_once 'auth.php';
-require_once 'cache.php';
-require_once 'system_logs.php';
+require_once 'database_pdo.php';
 require_once 'i18n.php';
+
+// Require login
 \Temporal\Auth::getInstance()->requireLogin();
+
 $current_page = 'settings';
 include 'includes/header.php';
 ?>
@@ -14,47 +16,50 @@ include 'includes/header.php';
         <p class="text-gray-600"><?php echo __('settings_subtitle'); ?></p>
     </div>
 
-    <!-- Worker & Automation Card -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-100">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 pb-3 border-b border-gray-100">
-            <div>
-                <h2 class="text-lg font-semibold text-gray-900"><?php echo __('worker_card_title'); ?></h2>
-                <p class="text-sm text-gray-500"><?php echo __('worker_card_desc'); ?></p>
+    <div class="space-y-6">
+        <!-- Worker Daemon & Background Automation -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-gray-100 gap-2">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900"><?php echo __('worker_title'); ?></h2>
+                    <p class="text-xs text-gray-500"><?php echo __('worker_desc'); ?></p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span id="settings-worker-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+                        <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>
+                        Loading...
+                    </span>
+                    <button type="button" id="btn-run-worker-once" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition">
+                        ⚡ <?php echo __('run_once_btn'); ?>
+                    </button>
+                </div>
             </div>
-            <div id="settings-worker-badge" class="mt-2 md:mt-0 inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border">
-                <span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> <?php echo __('worker_badge_loading'); ?>
-            </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block"><?php echo __('last_heartbeat'); ?></span>
-                <span id="worker-last-beat" class="text-sm font-semibold text-gray-800">-</span>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block"><?php echo __('loop_interval'); ?></span>
-                <span id="worker-interval" class="text-sm font-semibold text-gray-800">10s</span>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <span class="text-xs text-gray-500 block"><?php echo __('last_status'); ?></span>
-                <span id="worker-status-text" class="text-sm font-semibold text-gray-800">-</span>
-            </div>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-            <button type="button" id="btn-run-worker-once" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow-sm transition">
-                <?php echo __('run_worker_once'); ?>
-            </button>
-            <span class="text-xs text-gray-500">
-                CLI: <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">php worker.php</code> | <code class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono">scripts\run_worker.bat</code>
-            </span>
-        </div>
-        <div id="worker-action-result" class="text-sm text-gray-600 mt-2"></div>
-    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="p-3 bg-gray-50 rounded-md border">
+                    <div class="text-gray-500 font-medium"><?php echo __('worker_last_beat'); ?></div>
+                    <div id="worker-last-beat" class="text-sm font-bold text-gray-800 mt-1 font-mono">-</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-md border">
+                    <div class="text-gray-500 font-medium"><?php echo __('worker_interval'); ?></div>
+                    <div id="worker-interval" class="text-sm font-bold text-gray-800 mt-1">10s</div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-md border">
+                    <div class="text-gray-500 font-medium"><?php echo __('worker_last_status'); ?></div>
+                    <div id="worker-last-status" class="text-sm font-bold text-gray-800 mt-1 font-mono truncate">-</div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-blue-50/50 rounded-md border border-blue-100 text-xs text-gray-700">
+                <span class="font-semibold text-blue-900"><?php echo __('cli_daemon_command'); ?>:</span>
+                <code class="ml-1 bg-white px-2 py-0.5 rounded border text-blue-700 font-mono">php worker.php --interval=10 --simulate</code>
+            </div>
+            <div id="worker-action-result" class="text-xs text-gray-600 mt-2"></div>
+        </div>
 
         <!-- API Keys Management -->
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-gray-100 mb-4 gap-2">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900"><?php echo __('api_keys_title'); ?></h2>
                     <p class="text-xs text-gray-500"><?php echo __('api_keys_desc'); ?></p>
@@ -106,6 +111,92 @@ include 'includes/header.php';
                 </table>
             </div>
             <div id="key-result" class="text-xs text-gray-600 mt-2"></div>
+        </div>
+
+        <!-- Alerting & Webhooks Management Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-gray-100 mb-4 gap-2">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <span>🚨</span> <?php echo __('alerting_title'); ?>
+                    </h2>
+                    <p class="text-xs text-gray-500"><?php echo __('alerting_desc'); ?></p>
+                </div>
+                <button type="button" id="btn-show-create-alert" class="bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-sm transition">
+                    <?php echo __('create_new_alert'); ?>
+                </button>
+            </div>
+
+            <!-- Create Alert Form (Hidden by default) -->
+            <div id="create-alert-box" class="hidden mb-4 p-4 bg-red-50/60 border border-red-200 rounded-lg">
+                <h3 class="text-sm font-semibold text-red-900 mb-3"><?php echo __('create_new_alert'); ?></h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('rule_name'); ?></label>
+                        <input id="alert-name" type="text" placeholder="e.g. Critical Spike > 500 events" class="w-full px-3 py-1.5 border rounded-md">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('rule_type'); ?></label>
+                        <select id="alert-rule-type" class="w-full px-3 py-1.5 border rounded-md bg-white">
+                            <option value="volume_threshold" selected><?php echo __('volume_threshold'); ?></option>
+                            <option value="anomaly_spike"><?php echo __('anomaly_spike'); ?></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('threshold'); ?></label>
+                        <input id="alert-threshold" type="number" value="500" class="w-full px-3 py-1.5 border rounded-md">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('cooldown_minutes'); ?></label>
+                        <input id="alert-cooldown" type="number" value="5" class="w-full px-3 py-1.5 border rounded-md">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('webhook_url'); ?></label>
+                        <input id="alert-webhook-url" type="text" placeholder="https://discord.com/api/webhooks/... or https://hooks.slack.com/services/..." class="w-full px-3 py-1.5 border rounded-md font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('webhook_format'); ?></label>
+                        <select id="alert-format" class="w-full px-3 py-1.5 border rounded-md bg-white">
+                            <option value="generic_json" selected>Generic JSON</option>
+                            <option value="discord">Discord Webhook Embed</option>
+                            <option value="slack">Slack Webhook Block</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1"><?php echo __('bucket_size'); ?></label>
+                        <select id="alert-bucket-size" class="w-full px-3 py-1.5 border rounded-md bg-white">
+                            <option value="1m" selected>1m</option>
+                            <option value="5m">5m</option>
+                            <option value="15m">15m</option>
+                            <option value="1h">1h</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex space-x-2 pt-3">
+                    <button type="button" id="btn-save-alert" class="bg-red-600 hover:bg-red-700 text-white text-xs font-medium px-4 py-2 rounded-md"><?php echo __('create'); ?></button>
+                    <button type="button" id="btn-cancel-alert" class="bg-gray-300 hover:bg-gray-400 text-gray-800 text-xs font-medium px-3 py-2 rounded-md"><?php echo __('cancel'); ?></button>
+                </div>
+            </div>
+
+            <!-- Alert Rules Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-xs">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('rule_name'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('rule_type'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('threshold'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('last_triggered'); ?></th>
+                            <th class="px-3 py-2 text-left font-medium text-gray-500"><?php echo __('key_table_status'); ?></th>
+                            <th class="px-3 py-2 text-right font-medium text-gray-500"><?php echo __('key_table_action'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="alert-rules-table" class="bg-white divide-y divide-gray-100">
+                        <tr><td colspan="6" class="px-3 py-3 text-center text-gray-400">Loading alert rules...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="alert-result" class="text-xs text-gray-600 mt-2"></div>
         </div>
 
         <!-- Security / Password Change -->
@@ -208,7 +299,6 @@ include 'includes/header.php';
             </div>
             <div id="manual-import-result" class="text-sm text-gray-600 mt-3"></div>
         </div>
-
     </div>
 </div>
 
@@ -218,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadExternalApi();
     loadWorkerStatus();
     loadApiKeys();
+    loadAlertRules();
 
     setInterval(loadWorkerStatus, 8000);
 
@@ -238,7 +329,139 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('create-key-box').classList.add('hidden');
     });
     document.getElementById('btn-save-key').addEventListener('click', createApiKey);
+
+    // Alerts UI
+    document.getElementById('btn-show-create-alert').addEventListener('click', () => {
+        document.getElementById('create-alert-box').classList.toggle('hidden');
+    });
+    document.getElementById('btn-cancel-alert').addEventListener('click', () => {
+        document.getElementById('create-alert-box').classList.add('hidden');
+    });
+    document.getElementById('btn-save-alert').addEventListener('click', createAlertRule);
 });
+
+/* Alert Rules Management */
+async function loadAlertRules() {
+    const tbody = document.getElementById('alert-rules-table');
+    try {
+        const res = await fetch('/actions/alert_rules.php?action=list');
+        const json = await res.json();
+        if (!json.success || !json.data || json.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-center text-gray-400">No alert rules configured yet.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = json.data.map(rule => {
+            const statusBadge = rule.is_active == 1 
+                ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">Active</span>'
+                : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">Inactive</span>';
+
+            const typeLabel = rule.rule_type === 'volume_threshold' ? 'Volume Threshold' : 'Anomaly Spike';
+            const thresholdLabel = rule.rule_type === 'volume_threshold' ? `${rule.threshold_value} / ${rule.bucket_size}` : `+${rule.threshold_value}% deviation`;
+            const lastTrigger = rule.last_triggered_at ? new Date(rule.last_triggered_at).toLocaleString() : 'Never';
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-3 py-2.5 font-semibold text-gray-900">${escapeHtml(rule.name)}</td>
+                    <td class="px-3 py-2.5 text-gray-600">${typeLabel}</td>
+                    <td class="px-3 py-2.5 font-mono font-bold text-gray-800">${thresholdLabel}</td>
+                    <td class="px-3 py-2.5 text-gray-500 font-mono text-[11px]">${lastTrigger}</td>
+                    <td class="px-3 py-2.5">${statusBadge}</td>
+                    <td class="px-3 py-2.5 text-right space-x-1.5">
+                        <button onclick="testAlertRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-[11px] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                            🔔 Test
+                        </button>
+                        <button onclick="toggleAlertRule(${rule.id}, ${rule.is_active == 1 ? 0 : 1})" class="text-amber-600 hover:text-amber-800 font-semibold text-[11px] bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                            ${rule.is_active == 1 ? 'Disable' : 'Enable'}
+                        </button>
+                        <button onclick="deleteAlertRule(${rule.id})" class="text-red-600 hover:text-red-800 font-semibold text-[11px] bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-3 text-center text-red-500">Error loading alert rules</td></tr>';
+    }
+}
+
+async function createAlertRule() {
+    const name = document.getElementById('alert-name').value.trim();
+    const ruleType = document.getElementById('alert-rule-type').value;
+    const threshold = document.getElementById('alert-threshold').value;
+    const cooldown = document.getElementById('alert-cooldown').value;
+    const webhookUrl = document.getElementById('alert-webhook-url').value.trim();
+    const format = document.getElementById('alert-format').value;
+    const bucketSize = document.getElementById('alert-bucket-size').value;
+
+    if (!name || !webhookUrl) {
+        alert('Please fill in Rule Name and Webhook URL.');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('action', 'create');
+    fd.append('name', name);
+    fd.append('rule_type', ruleType);
+    fd.append('threshold_value', threshold);
+    fd.append('cooldown_minutes', cooldown);
+    fd.append('webhook_url', webhookUrl);
+    fd.append('webhook_format', format);
+    fd.append('bucket_size', bucketSize);
+
+    const res = await fetch('/actions/alert_rules.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (json.success) {
+        document.getElementById('create-alert-box').classList.add('hidden');
+        document.getElementById('alert-name').value = '';
+        document.getElementById('alert-webhook-url').value = '';
+        loadAlertRules();
+    } else {
+        alert('Error: ' + (json.error || 'Failed to create alert rule'));
+    }
+}
+
+async function toggleAlertRule(id, newStatus) {
+    const fd = new FormData();
+    fd.append('action', 'toggle');
+    fd.append('id', id);
+    fd.append('is_active', newStatus);
+
+    await fetch('/actions/alert_rules.php', { method: 'POST', body: fd });
+    loadAlertRules();
+}
+
+async function deleteAlertRule(id) {
+    if (!confirm('Are you sure you want to delete this alert rule?')) return;
+    const fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('id', id);
+
+    await fetch('/actions/alert_rules.php', { method: 'POST', body: fd });
+    loadAlertRules();
+}
+
+async function testAlertRule(id) {
+    const resBox = document.getElementById('alert-result');
+    resBox.textContent = 'Sending test webhook payload...';
+    resBox.className = 'text-xs text-blue-600 mt-2 font-semibold';
+
+    try {
+        const res = await fetch(`/actions/alert_rules.php?action=test&id=${id}`);
+        const json = await res.json();
+        if (json.success) {
+            resBox.textContent = '✅ ' + json.message;
+            resBox.className = 'text-xs text-green-600 mt-2 font-semibold';
+        } else {
+            resBox.textContent = '❌ ' + json.message;
+            resBox.className = 'text-xs text-red-600 mt-2 font-semibold';
+        }
+    } catch (e) {
+        resBox.textContent = '❌ Test request failed: ' + e.message;
+        resBox.className = 'text-xs text-red-600 mt-2';
+    }
+}
 
 async function loadWorkerStatus() {
     try {
@@ -248,69 +471,73 @@ async function loadWorkerStatus() {
             const d = json.data;
             const badge = document.getElementById('settings-worker-badge');
             if (d.is_live) {
-                badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-300';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span> ${window.t('active', 'Active')} (${d.seconds_ago !== null ? d.seconds_ago + 's' : ''})`;
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800';
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-green-500 animate-pulse"></span>${window.t('active', 'Active')} (${d.seconds_ago !== null ? d.seconds_ago + 's' : ''})`;
             } else {
-                badge.className = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-300';
-                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span> ${window.t('passive', 'Offline')}`;
+                badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600';
+                badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>${window.t('worker_badge_offline', 'Offline')}`;
             }
-            document.getElementById('worker-last-beat').textContent = d.last_beat || window.t('none', 'None');
-            document.getElementById('worker-interval').textContent = d.interval + 's';
-            document.getElementById('worker-status-text').textContent = d.status_text || '-';
+
+            document.getElementById('worker-last-beat').textContent = d.last_beat ? formatDate(d.last_beat) : 'Never';
+            document.getElementById('worker-interval').textContent = (d.interval || 10) + 's';
+            document.getElementById('worker-last-status').textContent = d.last_status || 'Idle';
         }
     } catch (e) {}
 }
 
 async function runWorkerOnce() {
-    const btn = document.getElementById('btn-run-worker-once');
-    const resultBox = document.getElementById('worker-action-result');
-    btn.disabled = true;
-    btn.textContent = '⏳ ...';
-    resultBox.textContent = '';
-
+    const resBox = document.getElementById('worker-action-result');
+    resBox.textContent = 'Executing worker single cycle...';
     try {
-        const res = await fetch('/actions/worker_control.php', { method: 'POST' });
+        const res = await fetch('/actions/worker_control.php?action=run_once');
         const json = await res.json();
-        resultBox.textContent = json.message || (json.success ? 'Done' : 'Error');
-        loadWorkerStatus();
+        if (json.success) {
+            resBox.textContent = json.message || 'Worker cycle executed successfully.';
+            loadWorkerStatus();
+        } else {
+            resBox.textContent = 'Error: ' + (json.error || 'Execution failed');
+        }
     } catch (e) {
-        resultBox.textContent = 'Error: ' + e.message;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = window.t('run_worker_once', '⚡ Run Cycle Now (Run Once)');
+        resBox.textContent = 'Error executing worker: ' + e.message;
     }
 }
 
 async function loadApiKeys() {
+    const tbody = document.getElementById('api-keys-table');
     try {
         const res = await fetch('/actions/api_keys.php?action=list');
         const json = await res.json();
-        const tbody = document.getElementById('api-keys-table');
         if (!json.success || !json.data || json.data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-gray-400">No API keys found.</td></tr>';
             return;
         }
 
-        tbody.innerHTML = json.data.map(k => `
-            <tr class="hover:bg-gray-50">
-                <td class="px-3 py-2 font-medium text-gray-800">${escapeHtml(k.name)}</td>
-                <td class="px-3 py-2 font-mono text-gray-600 flex items-center gap-1">
-                    <span>${escapeHtml(k.key_value.substring(0, 14))}...</span>
-                    <button onclick="copyToClipboard('${escapeHtml(k.key_value)}')" class="text-blue-500 hover:text-blue-700 text-xs px-1 py-0.5 bg-blue-50 rounded" title="Copy">📋</button>
-                </td>
-                <td class="px-3 py-2">
-                    <button onclick="toggleApiKey(${k.id}, ${k.is_active ? 0 : 1})" class="px-2 py-0.5 rounded-full text-xs font-semibold ${k.is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}">
-                        ${k.is_active ? window.t('active', 'Active') : window.t('passive', 'Inactive')}
-                    </button>
-                </td>
-                <td class="px-3 py-2 text-right">
-                    <button onclick="deleteApiKey(${k.id})" class="text-red-500 hover:text-red-700 font-semibold text-xs">${window.t('delete', 'Delete')}</button>
-                </td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = json.data.map(k => {
+            const statusBadge = k.is_active == 1 
+                ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">Active</span>'
+                : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600">Revoked</span>';
 
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-3 py-2 font-medium text-gray-900">${escapeHtml(k.name)}</td>
+                    <td class="px-3 py-2 font-mono text-gray-600">
+                        <span class="bg-gray-100 px-1.5 py-0.5 rounded text-[11px]">${escapeHtml(k.key_value)}</span>
+                        <button onclick="copyToClipboard('${k.key_value}')" class="ml-1 text-blue-600 hover:underline text-[10px]">Copy</button>
+                    </td>
+                    <td class="px-3 py-2">${statusBadge}</td>
+                    <td class="px-3 py-2 text-right space-x-1">
+                        <button onclick="toggleApiKey(${k.id}, ${k.is_active == 1 ? 0 : 1})" class="text-xs text-amber-600 hover:underline">
+                            ${k.is_active == 1 ? 'Revoke' : 'Activate'}
+                        </button>
+                        <button onclick="deleteApiKey(${k.id})" class="text-xs text-red-600 hover:underline ml-2">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     } catch (e) {
-        document.getElementById('api-keys-table').innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-red-400">Error loading API keys.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="px-3 py-3 text-center text-red-500">Error loading keys</td></tr>';
     }
 }
 
@@ -319,7 +546,10 @@ async function createApiKey() {
     const rate = document.getElementById('new-key-rate').value;
     const custom = document.getElementById('new-key-custom').value.trim();
 
-    if (!name) { alert('Please enter key name'); return; }
+    if (!name) {
+        alert('Please enter a key name');
+        return;
+    }
 
     const fd = new FormData();
     fd.append('action', 'create');
@@ -330,21 +560,21 @@ async function createApiKey() {
     const res = await fetch('/actions/api_keys.php', { method: 'POST', body: fd });
     const json = await res.json();
     if (json.success) {
+        document.getElementById('create-key-box').classList.add('hidden');
         document.getElementById('new-key-name').value = '';
         document.getElementById('new-key-custom').value = '';
-        document.getElementById('create-key-box').classList.add('hidden');
-        document.getElementById('key-result').textContent = 'Key created: ' + json.data.key_value;
         loadApiKeys();
     } else {
-        alert(json.error || 'Error creating key');
+        alert('Error: ' + (json.error || 'Failed to create key'));
     }
 }
 
-async function toggleApiKey(id, status) {
+async function toggleApiKey(id, newStatus) {
     const fd = new FormData();
     fd.append('action', 'toggle');
     fd.append('id', id);
-    fd.append('is_active', status);
+    fd.append('is_active', newStatus);
+
     await fetch('/actions/api_keys.php', { method: 'POST', body: fd });
     loadApiKeys();
 }
@@ -354,13 +584,14 @@ async function deleteApiKey(id) {
     const fd = new FormData();
     fd.append('action', 'delete');
     fd.append('id', id);
+
     await fetch('/actions/api_keys.php', { method: 'POST', body: fd });
     loadApiKeys();
 }
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        alert('Copied to clipboard: ' + text);
+        alert('API Key copied to clipboard!');
     });
 }
 
@@ -374,8 +605,8 @@ async function changePassword() {
     const confirm = document.getElementById('confirm-password').value;
     const resultBox = document.getElementById('password-result');
 
-    if (!current || !next || !confirm) {
-        resultBox.textContent = 'Please fill in all fields.';
+    if (!current || !next) {
+        resultBox.textContent = 'Please fill all password fields.';
         resultBox.className = 'text-xs text-red-600 mt-2';
         return;
     }

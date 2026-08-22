@@ -155,6 +155,22 @@ return [
     'manual_json_desc' => 'Pegue matrices JSON de eventos crudos para ingerir y procesar al instante.',
     'import_and_aggregate' => 'Importar y Procesar',
 
+    // Alerting & Webhooks
+    'alerting_title' => 'Alarmas Automáticas y Notificaciones Webhook',
+    'alerting_desc' => 'Envíe alertas JSON instantáneas a Discord, Slack o servicios externos cuando se superen umbrales de volumen o se detecten anomalías.',
+    'create_new_alert' => '+ Nueva Regla de Alarma',
+    'rule_name' => 'Nombre / Descripción de la Regla',
+    'rule_type' => 'Tipo de Activador de Regla',
+    'volume_threshold' => 'Umbral de Volumen (Eventos / Intervalo)',
+    'anomaly_spike' => 'Pico de Desviación de Anomalía (%)',
+    'threshold' => 'Valor Umbral',
+    'cooldown_minutes' => 'Tiempo de Enfriamiento (min)',
+    'webhook_url' => 'URL de Destino del Webhook',
+    'webhook_format' => 'Formato de Carga Útil',
+    'test_webhook' => '🔔 Probar Webhook',
+    'last_triggered' => 'Última Activación',
+    'never' => 'Nunca Activada',
+
     // API Console
     'api_console_title' => 'Consola Interactiva de Pruebas de API (Try-It-Out)',
     'api_console_subtitle' => 'Pruebe puntos finales de API en vivo, genere comandos cURL y mida la latencia de respuesta directamente en su navegador.',

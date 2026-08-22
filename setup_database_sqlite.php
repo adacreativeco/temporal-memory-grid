@@ -133,6 +133,40 @@ $db = \Temporal\Database::getInstance();
             last_used_at TIMESTAMP NULL
         )";
         $db->execute($sql);
+
+        // Create alert_rules table
+        $sql = "
+        CREATE TABLE IF NOT EXISTS alert_rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name VARCHAR(150) NOT NULL,
+            rule_type VARCHAR(50) NOT NULL, -- 'volume_threshold', 'anomaly_spike'
+            metric_type VARCHAR(50) DEFAULT 'total_events',
+            threshold_value REAL NOT NULL,
+            bucket_size VARCHAR(10) DEFAULT '1m',
+            webhook_url TEXT NOT NULL,
+            webhook_format VARCHAR(50) DEFAULT 'generic_json', -- 'generic_json', 'slack', 'discord'
+            cooldown_minutes INTEGER DEFAULT 5,
+            is_active INTEGER DEFAULT 1,
+            last_triggered_at DATETIME NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        $db->execute($sql);
+
+        // Create alert_history table
+        $sql = "
+        CREATE TABLE IF NOT EXISTS alert_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rule_id INTEGER,
+            rule_name VARCHAR(150),
+            trigger_reason TEXT,
+            observed_value REAL,
+            threshold_value REAL,
+            webhook_status VARCHAR(50),
+            response_code INTEGER,
+            payload_json TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        $db->execute($sql);
         
         // Ensure a single settings row exists
         $existing = $db->query("SELECT COUNT(*) as count FROM settings");

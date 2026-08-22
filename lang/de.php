@@ -155,6 +155,22 @@ return [
     'manual_json_desc' => 'Fügen Sie Rohereignis-JSON-Arrays ein, um sie sofort zu verarbeiten.',
     'import_and_aggregate' => 'Importieren & Aggregieren',
 
+    // Alerting & Webhooks
+    'alerting_title' => 'Automatische Alarme & Webhook-Benachrichtigungen',
+    'alerting_desc' => 'Senden Sie sofortige Webhooks an Discord, Slack oder benutzerdefinierte URLs, wenn Schwellenwerte überschritten werden.',
+    'create_new_alert' => '+ Neue Alarmregel erstellen',
+    'rule_name' => 'Regelname / Beschreibung',
+    'rule_type' => 'Regelauslöser-Typ',
+    'volume_threshold' => 'Volumenschwelle (Ereignisse / Bucket)',
+    'anomaly_spike' => 'Anomalie-Abweichungsspitze (%)',
+    'threshold' => 'Schwellenwert',
+    'cooldown_minutes' => 'Benachrichtigungsintervall (Abklingzeit - Min.)',
+    'webhook_url' => 'Webhook-URL-Adresse',
+    'webhook_format' => 'Payload-Format',
+    'test_webhook' => '🔔 Test senden',
+    'last_triggered' => 'Zuletzt ausgelöst',
+    'never' => 'Nie ausgelöst',
+
     // API Console
     'api_console_title' => 'Interaktive API-Testkonsole (Try-It-Out)',
     'api_console_subtitle' => 'Testen Sie Live-API-Endpunkte, generieren Sie cURL-Befehle und messen Sie die Latenz direkt im Browser.',
