@@ -1,14 +1,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <div class="text-gray-500 text-sm">
-                    © 2024 Temporal Memory Grid - Zaman Akışı Analiz Motoru
+    <footer class="bg-white border-t border-gray-200 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
+                <div>
+                    © <?php echo date('Y'); ?> <strong>Temporal Memory Grid</strong> — <a href="https://adacreative.co" target="_blank" class="font-semibold text-gray-700 hover:text-blue-600">ADA Creative Co.</a> (<a href="mailto:git@adacreative.co" class="text-blue-600 hover:underline">git@adacreative.co</a>)
                 </div>
-                <div class="text-gray-500 text-sm">
-                    Son Güncelleme: <span id="last-update">-</span>
+                <div>
+                    Apache License 2.0 • All Rights Reserved
                 </div>
             </div>
         </div>
@@ -16,14 +16,6 @@
 
     <!-- Scripts -->
     <script>
-        // Update last update time
-        document.getElementById('last-update').textContent = new Date().toLocaleString('tr-TR');
-        
-        // Auto refresh every 30 seconds
-        setInterval(function() {
-            location.reload();
-        }, 30000);
-        
         // Loading spinner
         function showLoading() {
             return '<div class="flex justify-center items-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
@@ -39,14 +31,16 @@
             return '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">' + message + '</div>';
         }
         
-        // Format date for display
+        // Format date for display according to active locale
         function formatDate(dateString) {
-            return new Date(dateString).toLocaleString('tr-TR');
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleString(window.TMG_LOCALE || 'en-US');
         }
         
-        // Format number with thousands separator
+        // Format number with thousands separator according to active locale
         function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            if (num === null || num === undefined || isNaN(num)) return '-';
+            return new Intl.NumberFormat(window.TMG_LOCALE || 'en-US').format(num);
         }
         
         // API helper function

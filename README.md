@@ -259,7 +259,10 @@ TEMPORAL MEMORY GRID/
 
 ---
 
-## 📄 License
+## 📄 License & Authors
 
-This project is licensed under the [Apache License 2.0](LICENSE).
+- **Author & Maintainer:** **ADA Creative Co.** ([https://adacreative.co](https://adacreative.co))
+- **Contact / Git:** [git@adacreative.co](mailto:git@adacreative.co)
+- **License:** Licensed under the [Apache License 2.0](LICENSE).
+
 
