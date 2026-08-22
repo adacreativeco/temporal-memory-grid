@@ -184,12 +184,22 @@ return [
 
     // Logs
     'logs_title' => 'Journaux des Tâches Temporelles',
-    'logs_subtitle' => 'Historique des cycles d\'agrégation, exécutions du worker et opérations de nettoyage.',
+    'logs_subtitle' => 'Historique des cycles d\'agrégation, exécutions du worker, alertes et opérations de nettoyage.',
     'log_date' => 'Date / Heure',
     'log_job_type' => 'Type de Tâche',
     'log_status' => 'État',
     'log_message' => 'Message Détaillé',
-    'no_logs' => 'Aucun journal de tâche trouvé.',
+    'no_logs' => 'Aucun journal ne correspond aux filtres sélectionnés.',
+    'search_logs' => 'Rechercher un message ou un type...',
+    'filter_job_type' => 'Type de Tâche',
+    'filter_status' => 'État',
+    'all_jobs' => 'Tous les Types',
+    'all_statuses' => 'Tous les États',
+    'per_page' => 'Par Page',
+    'showing_logs_count' => 'Affichage de %1$s à %2$s sur %3$s entrées',
+    'clear_all_logs' => '🧹 Effacer les Journaux',
+    'clear_logs_confirm' => 'Êtes-vous sûr de vouloir supprimer tous les journaux système ?',
+    'logs_cleared' => 'Tous les journaux ont été effacés avec succès.',
 
     // Auth & Errors
     'login_title' => 'Connexion - Temporal Memory Grid',

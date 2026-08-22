@@ -184,12 +184,22 @@ return [
 
     // Logs
     'logs_title' => 'Temporal Jobs Log',
-    'logs_subtitle' => 'Historisches Protokoll der Aggregationszyklen, Worker-Läufe und Bereinigungen.',
+    'logs_subtitle' => 'Historisches Protokoll der Aggregationszyklen, Worker-Läufe, Alarmbenachrichtigungen und Bereinigungen.',
     'log_date' => 'Datum / Uhrzeit',
     'log_job_type' => 'Auftragstyp',
     'log_status' => 'Status',
     'log_message' => 'Detailnachricht',
-    'no_logs' => 'Keine aufgezeichneten Protokolle vorhanden.',
+    'no_logs' => 'Keine Protokolle für die ausgewählten Filter gefunden.',
+    'search_logs' => 'Nach Nachricht oder Typ suchen...',
+    'filter_job_type' => 'Auftragstyp',
+    'filter_status' => 'Status',
+    'all_jobs' => 'Alle Typen',
+    'all_statuses' => 'Alle Status',
+    'per_page' => 'Pro Seite',
+    'showing_logs_count' => 'Zeige %1$s bis %2$s von %3$s Einträgen',
+    'clear_all_logs' => '🧹 Protokolle löschen',
+    'clear_logs_confirm' => 'Möchten Sie wirklich alle Systemprotokolle löschen?',
+    'logs_cleared' => 'Alle Systemprotokolle wurden gelöscht.',
 
     // Auth & Errors
     'login_title' => 'Anmelden - Temporal Memory Grid',

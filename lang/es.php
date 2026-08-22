@@ -184,12 +184,22 @@ return [
 
     // Logs
     'logs_title' => 'Registro de Tareas Temporales',
-    'logs_subtitle' => 'Historial de ciclos de agregación, ejecuciones del worker y operaciones de limpieza.',
+    'logs_subtitle' => 'Historial de ciclos de agregación, ejecuciones del worker, notificaciones de alarma y limpieza.',
     'log_date' => 'Fecha / Hora',
     'log_job_type' => 'Tipo de Tarea',
     'log_status' => 'Estado',
-    'log_message' => 'Mensaje de Detalle',
-    'no_logs' => 'No se encontraron registros de tareas.',
+    'log_message' => 'Mensaje Detallado',
+    'no_logs' => 'No se encontraron registros que coincidan con los filtros.',
+    'search_logs' => 'Buscar en mensajes o tipos...',
+    'filter_job_type' => 'Tipo de Tarea',
+    'filter_status' => 'Estado',
+    'all_jobs' => 'Todos los Tipos',
+    'all_statuses' => 'Todos los Estados',
+    'per_page' => 'Por Página',
+    'showing_logs_count' => 'Mostrando %1$s a %2$s de %3$s registros',
+    'clear_all_logs' => '🧹 Borrar Registros',
+    'clear_logs_confirm' => '¿Está seguro de que desea eliminar todos los registros del sistema?',
+    'logs_cleared' => 'Todos los registros han sido borrados con éxito.',
 
     // Auth & Errors
     'login_title' => 'Iniciar Sesión - Temporal Memory Grid',

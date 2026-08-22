@@ -184,12 +184,22 @@ return [
 
     // Logs
     'logs_title' => 'Temporal Jobs Log',
-    'logs_subtitle' => 'Historical log of aggregation cycles, worker runs, and cleanup operations.',
+    'logs_subtitle' => 'Historical log of aggregation cycles, worker runs, alert dispatches, and cleanup operations.',
     'log_date' => 'Date / Time',
     'log_job_type' => 'Job Type',
     'log_status' => 'Status',
     'log_message' => 'Detail Message',
-    'no_logs' => 'No recorded job logs found.',
+    'no_logs' => 'No job logs match the selected filters.',
+    'search_logs' => 'Search message or job type...',
+    'filter_job_type' => 'Job Type',
+    'filter_status' => 'Status',
+    'all_jobs' => 'All Job Types',
+    'all_statuses' => 'All Statuses',
+    'per_page' => 'Per Page',
+    'showing_logs_count' => 'Showing %1$s to %2$s of %3$s entries',
+    'clear_all_logs' => '🧹 Clear Logs',
+    'clear_logs_confirm' => 'Are you sure you want to delete all system job logs?',
+    'logs_cleared' => 'All system job logs have been cleared.',
 
     // Auth & Errors
     'login_title' => 'Log In - Temporal Memory Grid',

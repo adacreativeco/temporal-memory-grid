@@ -184,12 +184,22 @@ return [
 
     // Logs
     'logs_title' => 'Temporal Jobs Log',
-    'logs_subtitle' => 'Agregasyon, arka plan döngüleri ve temizlik işlemlerinin geçmişi.',
+    'logs_subtitle' => 'Agregasyon, arka plan döngüleri, alarm bildirimleri ve temizlik işlemlerinin geçmişi.',
     'log_date' => 'Tarih / Saat',
     'log_job_type' => 'İşlem Türü',
     'log_status' => 'Durum',
     'log_message' => 'Detay Mesajı',
-    'no_logs' => 'Henüz kayıtlı bir işlem logu bulunmuyor.',
+    'no_logs' => 'Filtrelere uygun işlem logu bulunamadı.',
+    'search_logs' => 'Mesaj veya iş tipinde ara...',
+    'filter_job_type' => 'İşlem Türü',
+    'filter_status' => 'Durum',
+    'all_jobs' => 'Tüm İşlem Türleri',
+    'all_statuses' => 'Tüm Durumlar',
+    'per_page' => 'Kayıt / Sayfa',
+    'showing_logs_count' => 'Toplam %3$s kayıttan %1$s - %2$s arası gösteriliyor',
+    'clear_all_logs' => '🧹 Logları Temizle',
+    'clear_logs_confirm' => 'Tüm işlem loglarını silmek istediğinize emin misiniz?',
+    'logs_cleared' => 'Tüm sistem logları başarıyla temizlendi.',
 
     // Auth & Errors
     'login_title' => 'Giriş Yap - Temporal Memory Grid',
