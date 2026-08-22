@@ -23,6 +23,7 @@ include 'includes/header.php';
 ?>
 
 <div class="px-4 py-6 sm:px-0">
+    <!-- Top Bar -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-4 border-b border-gray-200">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2"><?php echo __('dashboard_title'); ?></h1>
@@ -42,59 +43,87 @@ include 'includes/header.php';
     </div>
 
     <!-- Aggregation Status Card -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900"><?php echo __('agg_status_title'); ?></h2>
-            <span id="live-update-time" class="text-xs text-gray-500"><?php echo __('last_update'); ?>: -</span>
+            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <span>⚡</span> <?php echo __('agg_status_title'); ?>
+            </h2>
+            <span id="live-update-time" class="text-xs text-gray-500 font-mono"><?php echo __('last_update'); ?>: -</span>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-blue-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-blue-600"><?php echo __('total_buckets'); ?></div>
-                <div id="kpi-total-buckets" class="text-2xl font-bold text-blue-900"><?php echo number_format($aggregation_status['total_buckets']); ?></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4">
+                <div class="text-xs font-semibold text-blue-600 uppercase tracking-wider"><?php echo __('total_buckets'); ?></div>
+                <div id="kpi-total-buckets" class="text-2xl font-bold text-blue-900 mt-1"><?php echo number_format($aggregation_status['total_buckets']); ?></div>
             </div>
-            <div class="bg-green-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-green-600"><?php echo __('total_events_agg'); ?></div>
-                <div id="kpi-total-events" class="text-2xl font-bold text-green-900"><?php echo number_format($aggregation_status['total_events_aggregated']); ?></div>
+            <div class="bg-green-50/70 border border-green-100 rounded-xl p-4">
+                <div class="text-xs font-semibold text-green-600 uppercase tracking-wider"><?php echo __('total_events_agg'); ?></div>
+                <div id="kpi-total-events" class="text-2xl font-bold text-green-900 mt-1"><?php echo number_format($aggregation_status['total_events_aggregated']); ?></div>
             </div>
-            <div class="bg-purple-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-purple-600"><?php echo __('latest_bucket_time'); ?></div>
-                <div id="kpi-latest-bucket" class="text-sm font-semibold text-purple-900"><?php echo $aggregation_status['latest_bucket_end'] ? date('Y-m-d H:i', strtotime($aggregation_status['latest_bucket_end'])) : __('none'); ?></div>
+            <div class="bg-purple-50/70 border border-purple-100 rounded-xl p-4">
+                <div class="text-xs font-semibold text-purple-600 uppercase tracking-wider"><?php echo __('latest_bucket_time'); ?></div>
+                <div id="kpi-latest-bucket" class="text-sm font-semibold text-purple-900 mt-2 font-mono"><?php echo $aggregation_status['latest_bucket_end'] ? date('Y-m-d H:i', strtotime($aggregation_status['latest_bucket_end'])) : __('none'); ?></div>
             </div>
-            <div class="bg-amber-50 rounded-lg p-4">
-                <div class="text-sm font-medium text-amber-600"><?php echo __('live_5m_events'); ?></div>
-                <div id="kpi-recent-events" class="text-2xl font-bold text-amber-900">-</div>
+            <div class="bg-amber-50/70 border border-amber-100 rounded-xl p-4">
+                <div class="text-xs font-semibold text-amber-600 uppercase tracking-wider"><?php echo __('live_5m_events'); ?></div>
+                <div id="kpi-recent-events" class="text-2xl font-bold text-amber-900 mt-1">-</div>
             </div>
         </div>
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo __('filters_title'); ?></h2>
+    <!-- Filters & Quick Pills Card -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4 pb-3 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <span>🎯</span> <?php echo __('filters_title'); ?>
+            </h2>
+
+            <!-- Quick Time Range Pills -->
+            <div class="flex flex-wrap items-center gap-1.5" id="quick-time-pills">
+                <button type="button" data-range="1h" class="quick-pill px-3 py-1 text-xs font-semibold rounded-full border transition border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+                    <?php echo __('last_1h'); ?>
+                </button>
+                <button type="button" data-range="6h" class="quick-pill px-3 py-1 text-xs font-semibold rounded-full border transition border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+                    <?php echo __('last_6h'); ?>
+                </button>
+                <button type="button" data-range="24h" class="quick-pill active px-3 py-1 text-xs font-semibold rounded-full border transition border-blue-600 text-white bg-blue-600 shadow-sm">
+                    <?php echo __('last_24h'); ?>
+                </button>
+                <button type="button" data-range="today" class="quick-pill px-3 py-1 text-xs font-semibold rounded-full border transition border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+                    <?php echo __('today'); ?>
+                </button>
+                <button type="button" data-range="7d" class="quick-pill px-3 py-1 text-xs font-semibold rounded-full border transition border-gray-300 text-gray-700 bg-white hover:bg-gray-50">
+                    <?php echo __('last_7d'); ?>
+                </button>
+            </div>
+        </div>
+
         <form id="filter-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-                <label for="time-range" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('time_range'); ?></label>
-                <select id="time-range" name="time_range" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="today"><?php echo __('today'); ?></option>
+                <label for="time-range" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('time_range'); ?></label>
+                <select id="time-range" name="time_range" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="1h"><?php echo __('last_1h'); ?></option>
+                    <option value="6h"><?php echo __('last_6h'); ?></option>
                     <option value="24h" selected><?php echo __('last_24h'); ?></option>
+                    <option value="today"><?php echo __('today'); ?></option>
                     <option value="7d"><?php echo __('last_7d'); ?></option>
                     <option value="custom"><?php echo __('custom_range'); ?></option>
                 </select>
             </div>
             
             <div>
-                <label for="bucket-size" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('bucket_size'); ?></label>
-                <select id="bucket-size" name="bucket_size" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="1m" selected>1 min</option>
-                    <option value="5m">5 min</option>
-                    <option value="15m">15 min</option>
-                    <option value="1h">1 hour</option>
-                    <option value="1d">1 day</option>
+                <label for="bucket-size" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('bucket_size'); ?></label>
+                <select id="bucket-size" name="bucket_size" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="1m" selected>1 min (1m)</option>
+                    <option value="5m">5 min (5m)</option>
+                    <option value="15m">15 min (15m)</option>
+                    <option value="1h">1 hour (1h)</option>
+                    <option value="1d">1 day (1d)</option>
                 </select>
             </div>
             
             <div>
-                <label for="event-type" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('event_type'); ?></label>
-                <select id="event-type" name="event_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="event-type" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('event_type'); ?></label>
+                <select id="event-type" name="event_type" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value=""><?php echo __('all'); ?></option>
                     <?php foreach ($event_types as $type): ?>
                         <option value="<?php echo htmlspecialchars($type['event_type']); ?>"><?php echo htmlspecialchars($type['event_type']); ?></option>
@@ -103,8 +132,8 @@ include 'includes/header.php';
             </div>
             
             <div>
-                <label for="source-id" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('source_id'); ?></label>
-                <select id="source-id" name="source_id" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="source-id" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('source_id'); ?></label>
+                <select id="source-id" name="source_id" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value=""><?php echo __('all'); ?></option>
                     <?php foreach ($event_sources as $source): ?>
                         <option value="<?php echo htmlspecialchars($source['source_id']); ?>"><?php echo htmlspecialchars($source['source_id']); ?></option>
@@ -116,91 +145,128 @@ include 'includes/header.php';
         <!-- Custom Date Range -->
         <div id="custom-date-range" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('start_date'); ?></label>
-                <input type="datetime-local" id="start-date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="start-date" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('start_date'); ?></label>
+                <input type="datetime-local" id="start-date" name="start_date" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2"><?php echo __('end_date'); ?></label>
-                <input type="datetime-local" id="end-date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label for="end-date" class="block text-xs font-medium text-gray-700 mb-1"><?php echo __('end_date'); ?></label>
+                <input type="datetime-local" id="end-date" name="end_date" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
         
-        <div class="mt-4 flex space-x-4">
-            <button type="button" id="apply-filters" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition duration-200">
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+            <button type="button" id="apply-filters" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm transition duration-200">
                 <?php echo __('apply_filters'); ?>
             </button>
-            <button type="button" id="refresh-data" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                <?php echo __('refresh'); ?>
+            <button type="button" id="refresh-data" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-semibold transition duration-200">
+                🔄 <?php echo __('refresh'); ?>
             </button>
         </div>
     </div>
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-xl shadow-md p-5 border border-gray-100">
             <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                    </div>
+                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                    📊
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500"><?php echo __('total_events'); ?></div>
-                    <div id="total-events" class="text-2xl font-semibold text-gray-900">-</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase"><?php echo __('total_events'); ?></div>
+                    <div id="total-events" class="text-2xl font-bold text-gray-900">-</div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-xl shadow-md p-5 border border-gray-100">
             <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
+                <div class="w-10 h-10 bg-green-100 text-green-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                    ⚡
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500"><?php echo __('peak_bucket'); ?></div>
-                    <div id="peak-bucket" class="text-lg font-semibold text-gray-900">-</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase"><?php echo __('peak_bucket'); ?></div>
+                    <div id="peak-bucket" class="text-base font-bold text-gray-900">-</div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-xl shadow-md p-5 border border-gray-100">
             <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
+                <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center font-bold text-lg">
+                    📈
                 </div>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-500"><?php echo __('avg_per_bucket'); ?></div>
-                    <div id="avg-per-bucket" class="text-2xl font-semibold text-gray-900">-</div>
+                    <div class="text-xs font-semibold text-gray-500 uppercase"><?php echo __('avg_per_bucket'); ?></div>
+                    <div id="avg-per-bucket" class="text-2xl font-bold text-gray-900">-</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Chart -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-900"><?php echo __('timeseries_chart'); ?></h2>
-            <div class="flex space-x-2">
-                <button id="export-csv" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                    <?php echo __('csv_export'); ?>
-                </button>
-                <button id="export-json" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium transition duration-200">
-                    <?php echo __('json_export'); ?>
-                </button>
+    <!-- Main Chart Card with Type Switcher -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-3 border-b border-gray-100">
+            <div>
+                <h2 id="chart-main-title" class="text-lg font-semibold text-gray-900"><?php echo __('timeseries_chart'); ?></h2>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Chart Type Switcher Buttons -->
+                <div class="inline-flex rounded-lg border border-gray-300 p-0.5 bg-gray-50 shadow-sm" role="group" id="chart-type-group">
+                    <button type="button" data-type="line" class="chart-type-btn px-2.5 py-1 text-xs font-semibold rounded-md transition bg-white text-blue-600 shadow-sm">
+                        📈 <?php echo __('chart_type_line'); ?>
+                    </button>
+                    <button type="button" data-type="bar" class="chart-type-btn px-2.5 py-1 text-xs font-semibold rounded-md transition text-gray-600 hover:text-gray-900">
+                        📊 <?php echo __('chart_type_bar'); ?>
+                    </button>
+                    <button type="button" data-type="area" class="chart-type-btn px-2.5 py-1 text-xs font-semibold rounded-md transition text-gray-600 hover:text-gray-900">
+                        🌊 <?php echo __('chart_type_area'); ?>
+                    </button>
+                </div>
+
+                <!-- Export Buttons -->
+                <div class="flex items-center space-x-1.5 pl-2 border-l border-gray-200">
+                    <button id="export-csv" class="bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 px-3 py-1 rounded-lg text-xs font-semibold transition">
+                        📥 CSV
+                    </button>
+                    <button id="export-json" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-lg text-xs font-semibold transition">
+                        📄 JSON
+                    </button>
+                </div>
             </div>
         </div>
         <div class="h-96">
             <canvas id="timeseries-chart"></canvas>
+        </div>
+    </div>
+
+    <!-- Geographic / Regional Grid Summary Card -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span>🗺️</span> <?php echo __('geo_summary_title'); ?>
+                </h2>
+                <p class="text-xs text-gray-500"><?php echo __('geo_summary_subtitle'); ?></p>
+            </div>
+            <div id="geo-grand-total" class="text-xs font-mono font-semibold text-gray-600 bg-gray-50 px-2.5 py-1 rounded-md border">
+                Total: -
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-100 text-xs">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-2.5 text-left font-semibold text-gray-500 uppercase tracking-wider"><?php echo __('cell_coords'); ?></th>
+                        <th class="px-4 py-2.5 text-left font-semibold text-gray-500 uppercase tracking-wider"><?php echo __('event_share'); ?></th>
+                        <th class="px-4 py-2.5 text-right font-semibold text-gray-500 uppercase tracking-wider"><?php echo __('key_table_status'); ?></th>
+                    </tr>
+                </thead>
+                <tbody id="geo-summary-tbody" class="bg-white divide-y divide-gray-100">
+                    <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400">Loading geographic summary...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -209,11 +275,13 @@ include 'includes/header.php';
 let chart = null;
 let eventSource = null;
 let isSseActive = false;
+let currentChartType = 'line'; // 'line', 'bar', 'area'
+let cachedBucketsData = null;
 
-// Initialize
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     updateChart();
+    loadGeoSummary();
     checkWorkerStatus();
     setInterval(checkWorkerStatus, 10000);
 });
@@ -225,7 +293,28 @@ window.addEventListener('beforeunload', function() {
 });
 
 function setupEventListeners() {
-    // Time range change
+    // Quick Range Pills
+    document.querySelectorAll('.quick-pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const range = this.dataset.range;
+            document.getElementById('time-range').value = range;
+            
+            document.querySelectorAll('.quick-pill').forEach(p => {
+                p.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+                p.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            });
+            this.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+            this.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+
+            const customRange = document.getElementById('custom-date-range');
+            customRange.classList.add('hidden');
+
+            updateChart();
+            loadGeoSummary();
+        });
+    });
+
+    // Time range dropdown change
     document.getElementById('time-range').addEventListener('change', function() {
         const customRange = document.getElementById('custom-date-range');
         if (this.value === 'custom') {
@@ -233,22 +322,53 @@ function setupEventListeners() {
         } else {
             customRange.classList.add('hidden');
         }
+        // Sync active pill
+        document.querySelectorAll('.quick-pill').forEach(p => {
+            if (p.dataset.range === this.value) {
+                p.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+                p.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+            } else {
+                p.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+                p.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+            }
+        });
+    });
+
+    // Chart Type Switcher Buttons
+    document.querySelectorAll('.chart-type-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const type = this.dataset.type;
+            if (type === currentChartType) return;
+            currentChartType = type;
+
+            document.querySelectorAll('.chart-type-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                b.classList.add('text-gray-600');
+            });
+            this.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            this.classList.remove('text-gray-600');
+
+            if (cachedBucketsData) {
+                renderChart(cachedBucketsData);
+            }
+        });
     });
     
     // Apply filters
-    document.getElementById('apply-filters').addEventListener('click', updateChart);
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        updateChart();
+        loadGeoSummary();
+    });
     
     // Refresh data
-    document.getElementById('refresh-data').addEventListener('click', updateChart);
+    document.getElementById('refresh-data').addEventListener('click', () => {
+        updateChart();
+        loadGeoSummary();
+    });
     
     // Export buttons
-    document.getElementById('export-csv').addEventListener('click', function() {
-        exportData('csv');
-    });
-    
-    document.getElementById('export-json').addEventListener('click', function() {
-        exportData('json');
-    });
+    document.getElementById('export-csv').addEventListener('click', () => exportData('csv'));
+    document.getElementById('export-json').addEventListener('click', () => exportData('json'));
 
     // SSE Stream Toggle
     document.getElementById('sse-toggle').addEventListener('click', toggleSseStream);
@@ -284,7 +404,7 @@ function startSseStream() {
                 sseIndicator.className = 'w-2.5 h-2.5 mr-2 rounded-full bg-red-500 animate-ping';
                 sseText.textContent = `🔴 ${window.t('live_stream_active', 'Live Active (%s)').replace('%s', payload.bucket_size)}`;
 
-                document.getElementById('live-update-time').textContent = window.t('last_live_data', 'Last Live Data') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'tr-TR');
+                document.getElementById('live-update-time').textContent = window.t('last_live_data', 'Last Live Data') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'en-US');
 
                 // Update KPIs
                 if (payload.kpis) {
@@ -304,8 +424,9 @@ function startSseStream() {
 
                 // Update Live Buckets on Chart
                 if (payload.buckets && payload.buckets.length > 0) {
-                    updateSummaryCards({ buckets: payload.buckets });
-                    renderChart({ buckets: payload.buckets });
+                    cachedBucketsData = { buckets: payload.buckets };
+                    updateSummaryCards(cachedBucketsData);
+                    renderChart(cachedBucketsData);
                 }
             } catch (err) {
                 console.error('SSE JSON parse error:', err);
@@ -353,9 +474,7 @@ async function checkWorkerStatus() {
                 badge.innerHTML = `<span class="w-2 h-2 mr-2 rounded-full bg-gray-400"></span>${window.t('worker_badge_offline', 'Worker: Offline')}`;
             }
         }
-    } catch (e) {
-        // Silently ignore network hiccups for status poller
-    }
+    } catch (e) {}
 }
 
 async function updateChart() {
@@ -364,13 +483,68 @@ async function updateChart() {
         params.metric_type = 'total_events';
         
         const data = await apiCall('timeseries/aggregate', params);
+        cachedBucketsData = data;
         
         updateSummaryCards(data);
         renderChart(data);
-        document.getElementById('live-update-time').textContent = window.t('last_update', 'Last Update') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'tr-TR');
+        document.getElementById('live-update-time').textContent = window.t('last_update', 'Last Update') + ': ' + new Date().toLocaleTimeString(window.TMG_LOCALE || 'en-US');
         
     } catch (error) {
         console.error('Error updating chart:', error);
+    }
+}
+
+async function loadGeoSummary() {
+    const tbody = document.getElementById('geo-summary-tbody');
+    try {
+        const params = getFilterParams();
+        const url = new URL('/actions/get_geo_summary.php', window.location.origin);
+        url.searchParams.append('start_time', params.start_time);
+        url.searchParams.append('end_time', params.end_time);
+
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (!json.success || !json.data || !json.data.regions || json.data.regions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-gray-400 font-sans">${window.t('no_geo_data', 'No geographical data found')}</td></tr>`;
+            document.getElementById('geo-grand-total').textContent = 'Total: 0';
+            return;
+        }
+
+        const d = json.data;
+        document.getElementById('geo-grand-total').textContent = 'Total: ' + formatNumber(d.grand_total);
+
+        tbody.innerHTML = d.regions.map(r => {
+            const intensityLabel = r.intensity === 'high' ? window.t('intensity_high', 'High') : (r.intensity === 'medium' ? window.t('intensity_med', 'Medium') : window.t('intensity_low', 'Low'));
+            const badgeClass = r.intensity === 'high' ? 'bg-red-100 text-red-800 border-red-200' : (r.intensity === 'medium' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-blue-100 text-blue-800 border-blue-200');
+            const barColor = r.intensity === 'high' ? 'bg-red-500' : (r.intensity === 'medium' ? 'bg-amber-500' : 'bg-blue-500');
+
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2.5 font-mono font-medium text-gray-900 flex items-center gap-1.5">
+                        <span class="text-blue-500">📍</span>
+                        <span>${escapeHtml(r.region)}</span>
+                    </td>
+                    <td class="px-4 py-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-800 w-12">${formatNumber(r.total_events)}</span>
+                            <div class="w-32 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                <div class="${barColor} h-2 rounded-full" style="width: ${r.percentage}%"></div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-semibold">${r.percentage}%</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2.5 text-right">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold border ${badgeClass}">
+                            ${intensityLabel}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="3" class="px-4 py-4 text-center text-red-400">Error loading geo summary</td></tr>`;
     }
 }
 
@@ -381,19 +555,28 @@ function getFilterParams() {
     const sourceId = document.getElementById('source-id').value;
     
     let startTime, endTime;
+    const now = Date.now();
     
     switch (timeRange) {
+        case '1h':
+            startTime = new Date(now - 1 * 60 * 60 * 1000).toISOString();
+            endTime = new Date(now).toISOString();
+            break;
+        case '6h':
+            startTime = new Date(now - 6 * 60 * 60 * 1000).toISOString();
+            endTime = new Date(now).toISOString();
+            break;
         case 'today':
             startTime = new Date().toISOString().split('T')[0] + 'T00:00:00Z';
             endTime = new Date().toISOString();
             break;
         case '24h':
-            startTime = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-            endTime = new Date().toISOString();
+            startTime = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+            endTime = new Date(now).toISOString();
             break;
         case '7d':
-            startTime = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-            endTime = new Date().toISOString();
+            startTime = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+            endTime = new Date(now).toISOString();
             break;
         case 'custom':
             startTime = document.getElementById('start-date').value;
@@ -421,18 +604,15 @@ function updateSummaryCards(data) {
         return;
     }
 
-    // Total events
     const totalEvents = data.buckets.reduce((sum, bucket) => sum + (parseInt(bucket.count) || 0), 0);
     document.getElementById('total-events').textContent = formatNumber(totalEvents);
     
-    // Peak bucket
     const peakBucket = data.buckets.reduce((max, bucket) => 
         (parseInt(bucket.count) || 0) > (parseInt(max.count) || 0) ? bucket : max, {count: 0}
     );
     document.getElementById('peak-bucket').textContent = 
         peakBucket.count > 0 ? `${formatNumber(peakBucket.count)} (${formatDate(peakBucket.bucket_start)})` : '-';
     
-    // Average per bucket
     const avgPerBucket = data.buckets.length > 0 ? totalEvents / data.buckets.length : 0;
     document.getElementById('avg-per-bucket').textContent = formatNumber(Math.round(avgPerBucket));
 }
@@ -443,27 +623,33 @@ function renderChart(data) {
     if (chart) {
         chart.destroy();
     }
+
+    const chartType = currentChartType === 'area' ? 'line' : currentChartType;
+    const isArea = currentChartType === 'area';
     
     chart = new Chart(ctx, {
-        type: 'line',
+        type: chartType,
         data: {
-            labels: (data.buckets || []).map(bucket => new Date(bucket.bucket_start).toLocaleString(window.TMG_LOCALE || 'tr-TR')),
+            labels: (data.buckets || []).map(bucket => new Date(bucket.bucket_start).toLocaleString(window.TMG_LOCALE || 'en-US')),
             datasets: [{
                 label: window.t('total_events', 'Total Events'),
                 data: (data.buckets || []).map(bucket => bucket.count),
                 borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.12)',
-                borderWidth: 2,
-                pointRadius: 3,
-                pointHoverRadius: 6,
+                backgroundColor: isArea 
+                    ? 'rgba(59, 130, 246, 0.35)' 
+                    : (chartType === 'bar' ? 'rgba(59, 130, 246, 0.75)' : 'rgba(59, 130, 246, 0.12)'),
+                borderWidth: chartType === 'bar' ? 1 : 2,
+                borderRadius: chartType === 'bar' ? 4 : 0,
+                pointRadius: chartType === 'bar' ? 0 : 3,
+                pointHoverRadius: chartType === 'bar' ? 0 : 6,
                 tension: 0.25,
-                fill: true
+                fill: isArea || chartType === 'line'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: isSseActive ? false : { duration: 400 },
+            animation: isSseActive ? false : { duration: 350 },
             plugins: {
                 title: {
                     display: true,
@@ -503,6 +689,10 @@ function renderChart(data) {
             }
         }
     });
+}
+
+function escapeHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 async function exportData(format) {
