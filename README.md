@@ -1,6 +1,14 @@
 # Temporal Memory Grid (TMG)
 
 <p align="center">
+  <a href="README.md">🇬🇧 <b>English</b></a> |
+  <a href="README.tr.md">🇹🇷 <b>Türkçe</b></a> |
+  <a href="README.de.md">🇩🇪 <b>Deutsch</b></a> |
+  <a href="README.es.md">🇪🇸 <b>Español</b></a> |
+  <a href="README.fr.md">🇫🇷 <b>Français</b></a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.0+">
   <img src="https://img.shields.io/badge/Database-SQLite%20%7C%20MySQL-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="Database">
   <img src="https://img.shields.io/badge/Frontend-TailwindCSS%20%2B%20Chart.js-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Frontend">
