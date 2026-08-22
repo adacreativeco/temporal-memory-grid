@@ -155,6 +155,17 @@ return [
     'manual_json_desc' => 'Pegue matrices JSON de eventos crudos para ingerir y procesar al instante.',
     'import_and_aggregate' => 'Importar y Procesar',
 
+    // API Console
+    'api_console_title' => 'Consola Interactiva de Pruebas de API (Try-It-Out)',
+    'api_console_subtitle' => 'Pruebe puntos finales de API en vivo, genere comandos cURL y mida la latencia de respuesta directamente en su navegador.',
+    'send_request' => '⚡ Enviar Solicitud (Execute)',
+    'response' => 'Respuesta del Servidor',
+    'status' => 'Estado',
+    'latency' => 'Latencia',
+    'response_size' => 'Tamaño',
+    'copy_response' => '📋 Copiar Respuesta',
+    'curl_command' => 'Comando cURL',
+
     // Logs
     'logs_title' => 'Registro de Tareas Temporales',
     'logs_subtitle' => 'Historial de ciclos de agregación, ejecuciones del worker y operaciones de limpieza.',

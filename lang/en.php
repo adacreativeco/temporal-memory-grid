@@ -155,6 +155,17 @@ return [
     'manual_json_desc' => 'Paste raw event JSON arrays to instantly ingest and aggregate.',
     'import_and_aggregate' => 'Import & Aggregate',
 
+    // API Console
+    'api_console_title' => 'Interactive API Test Console (Try-It-Out)',
+    'api_console_subtitle' => 'Test live API endpoints, generate cURL commands, and measure query latency directly from your browser.',
+    'send_request' => '⚡ Send Request (Execute)',
+    'response' => 'Server Response',
+    'status' => 'Status',
+    'latency' => 'Latency',
+    'response_size' => 'Size',
+    'copy_response' => '📋 Copy Response',
+    'curl_command' => 'cURL Command',
+
     // Logs
     'logs_title' => 'Temporal Jobs Log',
     'logs_subtitle' => 'Historical log of aggregation cycles, worker runs, and cleanup operations.',

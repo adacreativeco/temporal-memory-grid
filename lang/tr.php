@@ -155,6 +155,17 @@ return [
     'manual_json_desc' => 'Harici API yanıtını veya ham olay JSON dizisini yapıştırıp içe aktarın.',
     'import_and_aggregate' => 'İçe Aktar & Kovalara İşle',
 
+    // API Console
+    'api_console_title' => 'İnteraktif API Test Konsolu (Try-It-Out)',
+    'api_console_subtitle' => 'Tarayıcı içinden canlı parametreler ile API uç noktalarını anında test edin, cURL kodunu alın ve yanıt sürelerini ölçün.',
+    'send_request' => '⚡ İsteği Gönder (Execute)',
+    'response' => 'Sunucu Yanıtı',
+    'status' => 'Durum',
+    'latency' => 'Sorgu Süresi',
+    'response_size' => 'Boyut',
+    'copy_response' => '📋 Yanıtı Kopyala',
+    'curl_command' => 'cURL İstek Kodu',
+
     // Logs
     'logs_title' => 'Temporal Jobs Log',
     'logs_subtitle' => 'Agregasyon, arka plan döngüleri ve temizlik işlemlerinin geçmişi.',

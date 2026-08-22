@@ -155,6 +155,17 @@ return [
     'manual_json_desc' => 'Fügen Sie Rohereignis-JSON-Arrays ein, um sie sofort zu verarbeiten.',
     'import_and_aggregate' => 'Importieren & Aggregieren',
 
+    // API Console
+    'api_console_title' => 'Interaktive API-Testkonsole (Try-It-Out)',
+    'api_console_subtitle' => 'Testen Sie Live-API-Endpunkte, generieren Sie cURL-Befehle und messen Sie die Latenz direkt im Browser.',
+    'send_request' => '⚡ Anfrage senden (Execute)',
+    'response' => 'Serverantwort',
+    'status' => 'Status',
+    'latency' => 'Latenz',
+    'response_size' => 'Größe',
+    'copy_response' => '📋 Antwort kopieren',
+    'curl_command' => 'cURL-Befehl',
+
     // Logs
     'logs_title' => 'Temporal Jobs Log',
     'logs_subtitle' => 'Historisches Protokoll der Aggregationszyklen, Worker-Läufe und Bereinigungen.',

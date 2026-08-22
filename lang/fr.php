@@ -155,6 +155,17 @@ return [
     'manual_json_desc' => 'Collez des tableaux JSON d\'événements bruts pour les ingérer et les agréger.',
     'import_and_aggregate' => 'Importer et Agréger',
 
+    // API Console
+    'api_console_title' => 'Console de Test d\'API Interactive (Try-It-Out)',
+    'api_console_subtitle' => 'Testez des points de terminaison d\'API en direct, générez des commandes cURL et mesurez la latence directement depuis votre navigateur.',
+    'send_request' => '⚡ Envoyer la Requête (Execute)',
+    'response' => 'Réponse du Serveur',
+    'status' => 'État',
+    'latency' => 'Latence',
+    'response_size' => 'Taille',
+    'copy_response' => '📋 Copier la Réponse',
+    'curl_command' => 'Commande cURL',
+
     // Logs
     'logs_title' => 'Journaux des Tâches Temporelles',
     'logs_subtitle' => 'Historique des cycles d\'agrégation, exécutions du worker et opérations de nettoyage.',
