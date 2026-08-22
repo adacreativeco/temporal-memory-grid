@@ -8,16 +8,16 @@ $db = \Temporal\Database::getInstance();
     echo "Checking database tables...\n";
     
     // Check if tables exist
-    $tables = ['time_buckets', 'bucket_metrics', 'system_logs', 'events'];
+    $tables = ['time_buckets', 'bucket_metrics', 'system_logs', 'events', 'users', 'api_keys', 'alert_rules', 'alert_history', 'settings'];
     
     foreach ($tables as $table) {
         $result = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name=?", [$table]);
         if (!empty($result)) {
-            echo "✓ Table '$table' exists\n";
+            echo "✓ Table '$table' exists";
             
             // Get row count
             $count = $db->query("SELECT COUNT(*) as count FROM $table");
-            echo "  - Row count: " . $count[0]['count'] . "\n";
+            echo " (rows: " . $count[0]['count'] . ")\n";
         } else {
             echo "✗ Table '$table' does not exist\n";
         }
