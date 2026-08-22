@@ -1,9 +1,11 @@
 <?php
 require_once __DIR__ . '/../i18n.php';
 $lang = \Temporal\I18n::getLang();
+$supportedLanguages = \Temporal\I18n::getSupportedLanguages();
+$currentLangInfo = $supportedLanguages[$lang] ?? $supportedLanguages['tr'];
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo htmlspecialchars($lang); ?>">
+<html lang="<?php echo htmlspecialchars($lang); ?>" dir="<?php echo htmlspecialchars($currentLangInfo['dir'] ?? 'ltr'); ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +34,8 @@ $lang = \Temporal\I18n::getLang();
     <!-- Client-side Translations -->
     <script>
         window.TMG_LANG = <?php echo json_encode(\Temporal\I18n::getAll()); ?>;
-        window.TMG_LOCALE = '<?php echo $lang === 'en' ? 'en-US' : 'tr-TR'; ?>';
+        window.TMG_LOCALE = '<?php echo htmlspecialchars($currentLangInfo['locale'] ?? 'en-US'); ?>';
+        window.TMG_CURRENT_LANG = '<?php echo htmlspecialchars($lang); ?>';
         window.t = function(key, fallback) {
             return window.TMG_LANG[key] || fallback || key;
         };
@@ -40,46 +43,63 @@ $lang = \Temporal\I18n::getLang();
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg border-b border-gray-100">
+    <nav class="bg-white shadow-md border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
                         <a href="/index.php" class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
                             <span class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-black shadow-sm">TMG</span>
-                            <?php echo __('app_name'); ?>
+                            <span class="hidden sm:inline"><?php echo __('app_name'); ?></span>
                         </a>
                     </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-6">
-                        <a href="/index.php" class="<?php echo ($current_page ?? '') === 'dashboard' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-4 lg:space-x-6">
+                        <a href="/index.php" class="<?php echo ($current_page ?? '') === 'dashboard' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_dashboard'); ?>
                         </a>
-                        <a href="/trends.php" class="<?php echo ($current_page ?? '') === 'trends' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="/trends.php" class="<?php echo ($current_page ?? '') === 'trends' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_trends'); ?>
                         </a>
-                        <a href="/anomalies.php" class="<?php echo ($current_page ?? '') === 'anomalies' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="/anomalies.php" class="<?php echo ($current_page ?? '') === 'anomalies' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_anomalies'); ?>
                         </a>
-                        <a href="/settings.php" class="<?php echo ($current_page ?? '') === 'settings' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="/settings.php" class="<?php echo ($current_page ?? '') === 'settings' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_settings'); ?>
                         </a>
-                        <a href="/logs.php" class="<?php echo ($current_page ?? '') === 'logs' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="/logs.php" class="<?php echo ($current_page ?? '') === 'logs' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_logs'); ?>
                         </a>
-                        <a href="/api_guide.php" class="<?php echo ($current_page ?? '') === 'api_guide' ? 'border-blue-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                        <a href="/api_guide.php" class="<?php echo ($current_page ?? '') === 'api_guide' ? 'border-blue-500 text-gray-900 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'; ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             <?php echo __('nav_api_guide'); ?>
                         </a>
                     </div>
                 </div>
+
                 <div class="flex items-center space-x-3">
-                    <!-- Language Selector -->
-                    <div class="inline-flex rounded-md shadow-sm" role="group">
-                        <a href="?lang=tr" class="px-2.5 py-1 text-xs font-semibold rounded-l-md border <?php echo $lang === 'tr' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'; ?>">
-                            🇹🇷 TR
-                        </a>
-                        <a href="?lang=en" class="px-2.5 py-1 text-xs font-semibold rounded-r-md border-t border-b border-r <?php echo $lang === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'; ?>">
-                            🇬🇧 EN
-                        </a>
+                    <!-- Advanced Language Selector Dropdown -->
+                    <div class="relative inline-block text-left">
+                        <button type="button" id="lang-menu-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-xs font-semibold rounded-lg bg-white text-gray-700 hover:bg-gray-50 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <span><?php echo $currentLangInfo['flag']; ?></span>
+                            <span class="hidden md:inline"><?php echo htmlspecialchars($currentLangInfo['native']); ?></span>
+                            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-40 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 z-50 overflow-hidden">
+                            <div class="py-1">
+                                <?php foreach ($supportedLanguages as $code => $info): ?>
+                                    <a href="<?php echo \Temporal\I18n::getSwitchUrl($code); ?>" class="flex items-center justify-between px-4 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:text-blue-700 <?php echo $code === $lang ? 'font-bold bg-gray-50 text-blue-600' : ''; ?>">
+                                        <span class="flex items-center gap-2">
+                                            <span><?php echo $info['flag']; ?></span>
+                                            <span><?php echo htmlspecialchars($info['native']); ?></span>
+                                        </span>
+                                        <?php if ($code === $lang): ?>
+                                            <span class="text-blue-600 font-bold">✓</span>
+                                        <?php endif; ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
                     </div>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
@@ -94,6 +114,23 @@ $lang = \Temporal\I18n::getLang();
             </div>
         </div>
     </nav>
+
+    <script>
+    // Language dropdown toggle
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('lang-menu-btn');
+        const dropdown = document.getElementById('lang-dropdown');
+        if (btn && dropdown) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+            });
+        }
+    });
+    </script>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
